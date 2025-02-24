@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-PDF OCR and Data Structuring Demo</title>
     <script src="https://unpkg.com/tesseract.js@v6.0.0/dist/tesseract.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,10 +55,10 @@
 <div id="pdf-images"></div>
 <h2>OCR Result:</h2>
 <div id="result"></div>
-<h2>Structured Data:</h2>
+<h2>Parsed Data:</h2>
 <div id="structured-data"></div>
 
-<script>
+<script type="module">
     const form = document.getElementById('upload-form');
     const fileInput = document.getElementById('file-input');
     const resultDiv = document.getElementById('result');
@@ -65,7 +66,9 @@
     const pdfImagesDiv = document.getElementById('pdf-images');
     const structuredDataDiv = document.getElementById('structured-data');
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+    const {pdfjsLib} = globalThis;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.mjs';
+
 
     function log(message) {
         const timestamp = new Date().toISOString();
@@ -194,9 +197,9 @@
         // Note: JavaScript interprets date strings in UTC by default
         const date = new Date(dateString);
         return {
-                transaction_date: date.toISOString(),
-                items: result
-            };
+            transaction_date: date.toISOString(),
+            items: result
+        };
     }
 
     function parseWillysOcrResult(ocrText) {
