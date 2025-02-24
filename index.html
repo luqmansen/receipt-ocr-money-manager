@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-PDF OCR and Data Structuring Demo</title>
-    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@v6.0.0/dist/tesseract.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <style>
         body {
@@ -124,6 +124,7 @@
 
         log('Starting Tesseract.js recognition');
         const result = await Tesseract.recognize(imageBlob, 'swe', {
+            langPath: 'https://tessdata.projectnaptha.com/4.0.0_best/',
             logger: m => log(`Tesseract progress: ${m.status} (${(m.progress * 100).toFixed(2)}%)`)
         });
         log('Tesseract.js recognition completed');
