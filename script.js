@@ -240,31 +240,32 @@ form.addEventListener('submit', async (e) => {
     pdfImagesDiv.innerHTML = '';
     const files = fileInput.files;
 
-    if (files.length > 0) {
-        try {
-            let json_results = [];
-
-            const ocrResults = await Promise.all(
-                Array.from(files).map(async (file) => {
-                    return await processFiles(file);}
-            ));
-
-            for (const ocr of ocrResults) {
-                const structuredData = structureData(ocr);
-                json_results.push(structuredData);
-            }
-
-            structuredDataDiv.textContent = JSON.stringify(json_results, null, 2);
-            log('Data structuring completed');
-        } catch (error) {
-            log(`Error processing files: ${error.message}`);
-            resultDiv.textContent = 'Error processing files: ' + error.message;
-        } finally {
-            log('Processing completed');
-            await scheduler.terminate();
-        }
-    } else {
+    if (!files.length > 0) {
         log('No files selected for processing');
+        return;
+    }
+
+    try {
+        let json_results = [];
+
+        const ocrResults = await Promise.all(
+            Array.from(files).map(async (file) => {
+                return await processFiles(file);}
+        ));
+
+        for (const ocr of ocrResults) {
+            const structuredData = structureData(ocr);
+            json_results.push(structuredData);
+        }
+
+        structuredDataDiv.textContent = JSON.stringify(json_results, null, 2);
+        log('Data structuring completed');
+    } catch (error) {
+        log(`Error processing files: ${error.message}`);
+        resultDiv.textContent = 'Error processing files: ' + error.message;
+    } finally {
+        log('Processing completed');
+        await scheduler.terminate();
     }
 });
 
