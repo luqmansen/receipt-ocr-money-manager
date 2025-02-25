@@ -285,8 +285,11 @@ export function parseLidlOcrResult(text) {
                 const discountMatch = nextLine.match(/-(\d+[.,]\d+)/);
 
                 if (discountMatch) {
-                    const discount = parseFloat(discountMatch[1].replace(',', '.'));
-                    currentItem.price -= discount;
+                    // Add the discount as a separate item so we can track how much we saved
+                    items.push({
+                        name: currentItem.name + ' (discount)',
+                        price: -parseFloat(discountMatch[1].replace(',', '.'))
+                    })
                 } else if (nextLine.includes('SEK/kg')) {
                     currentItem.extraInfo = nextLine;
                 } else if (nextLine.match(/(\d+[.,]\d+)\s*C$/)) {
@@ -350,8 +353,14 @@ export function parseWillysOcrResult(ocrText) {
                 name: itemMatch[1].trim(), price: parseFloat(itemMatch[2].replace(',', '.'))
             });
         } else if (discountMatch) {
-            // subtract the discount from previous item
-            items[items.length - 1].price += parseFloat(discountMatch[0].replace(',', '.'));
+            // Add the discount as a separate item so we can track how much we saved
+            const previousItem = items[items.length - 1];
+            items.push(
+                {
+                    name: previousItem.name + ' (discount)',
+                    price: parseFloat(discountMatch[0].replace(',', '.')) // this is already negative
+                }
+            )
         }
     }
     const dateMatch = lines[lines.length - 1].match(dateRegex);

@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest'
-import {addSubCategory, outputMoneyManagerFormat, parseWillysOcrResult} from "./script";
+import {addSubCategory, enrichItems, outputMoneyManagerFormat, parseWillysOcrResult} from "./script";
 
 test('addSubCategory', () => {
     expect(addSubCategory(
@@ -108,70 +108,219 @@ Tfn: 08-420 03 380
 - Org: 556163-2232
 Öppet köp i 8 dagar med kvitto
 Gäller inte kyl- och frysvaror
-SHOT INGEF/GURKM 43,90
-ÖVERLÅR KYCKLING 2st49,90 99,80
-GORGONZOLA 29,90
-BONDBÖNOR 450G 24,90
-BROCCOLI 15,90
-Rabatt :BROCCOLI -6,00
-JORDGUBBAR 250G 3st+44,90 134,70
-3 + Willys Plus:JORDGUBBAR -75,00
-Totalt 9 varor
-Totalt — 268,10 SEK
+KYCKLING FILÉ 69,90
+CHOKL MANGO&PASSION 22,90
+OLIVOLJA 105,00
+NÖTMIX SALTY 200G 25,90
+LIBANESISKT BRÖD 11,90
+RÖDA LINSER EKO 29,90
+POTATIS SÖT 41,32
+STANDMJÖLK ESL 1,5L 19,50
+SALLADSOST 2st17,90 35,80
+Willys Plus:SALLADSOST -10,80
+KANELSNÄCKA 4st9,90 39,60
+Nytt pris 15,00 -24,60
+SURKÅL EKO 16,90
+KYCKLINGKÖTTBULLAR 49,90
+Rabatt :KÖTTBULLAR -15,00
+Totalt 16 varor
+Totalt — 418,12 SEK
 Låga priser på allt. Alltid.
-Med Willys Plus har du sparat: 75,00
+Med Willys Plus har du sparat: 10,80
 willys Plus registrerat
 willys Plus-nummer: 9752299071199367
-Mottaget Kontokort 268,10
-Ref:200244219967
-Nordea Debit PEPPEPPEEEE7556
-KÖP 268.1 SEK
+Mottaget Kontokort 418,12
+Ref:200244238433
+Nordea Debit PEPPPPPENEE7556
+KÖP 418.12 SEK
 Butik:”=+0777
-Ref: 200244219967 Term: 20024421
+Ref: 200244238433 Term: 20024423
 TVR: 0900000000 AID: A0000000031010
-2025-02-14 15:11:51 TSI: 0000
-Kontaktlös K/1 7 001 SWE 806421
+2025-02-22 13:30:50 TSI: 0000
+Kontaktlös KA1 7 001 SWE 532942
 Moms5s Moms Netto Brutto
-12,00 28,72 239,38 268,10
+12,00 44,81 373,31 418,12
 SPARA KVITTOT
 Öppettider
 Alla dagar 07-22
 välkommen åter!
 Du betjänades av
 Självcheckout Kassör
-Kassa: 31/70 2025-02-14 15:11
+Kassa: 28/64 2025-02-22 13:30
     `
 
-    expect(parseWillysOcrResult(text)).toStrictEqual(
-        {
-            "transaction_date": new Date("2025-02-14T14:11:00.000Z"),
+
+    expect(enrichItems([parseWillysOcrResult(text)])).toStrictEqual(
+        [{
+            "transaction_date": new Date("2025-02-22T12:30:00.000Z"),
             "items": [
                 {
-                    "name": "SHOT INGEF/GURKM",
-                    "price": "43.90"
+                    "name": "KYCKLING FILÉ",
+                    "price": "69.90",
+                    "subCategory": "Protein",
+                    "bestMatch": {
+                        "category": "Protein",
+                        "match": "kyckling",
+                        "score": 100
+                    },
+                    "category": "food"
                 },
                 {
-                    "name": "ÖVERLÅR KYCKLING 2st49,90",
-                    "price": "99.80"
+                    "name": "CHOKL MANGO&PASSION",
+                    "price": "22.90",
+                    "subCategory": "Fruit",
+                    "bestMatch": {
+                        "category": "Fruit",
+                        "match": "mango",
+                        "score": 100
+                    },
+                    "category": "food"
                 },
                 {
-                    "name": "GORGONZOLA",
-                    "price": "29.90"
+                    "name": "OLIVOLJA",
+                    "price": "105.00",
+                    "subCategory": "Food Supplies",
+                    "bestMatch": {
+                        "category": "Food Supplies",
+                        "match": "olivolja",
+                        "score": 100
+                    },
+                    "category": "food"
                 },
                 {
-                    "name": "BONDBÖNOR 450G",
-                    "price": "24.90"
+                    "name": "NÖTMIX SALTY 200G",
+                    "price": "25.90",
+                    "subCategory": "Snacking",
+                    "bestMatch": {
+                        "category": "Snacking",
+                        "match": "notskalsost",
+                        "score": 50
+                    },
+                    "category": "food"
                 },
                 {
-                    "name": "BROCCOLI",
-                    "price": "9.90"
+                    "name": "LIBANESISKT BRÖD",
+                    "price": "11.90",
+                    "subCategory": "Bread",
+                    "bestMatch": {
+                        "category": "Bread",
+                        "match": "brod",
+                        "score": 100
+                    },
+                    "category": "food"
                 },
                 {
-                    "name": "JORDGUBBAR 250G 3st+44,90",
-                    "price": "59.70"
+                    "name": "RÖDA LINSER EKO",
+                    "price": "29.90",
+                    "subCategory": "Food Supplies",
+                    "bestMatch": {
+                        "category": "Food Supplies",
+                        "match": "linser",
+                        "score": 100
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "POTATIS SÖT",
+                    "price": "41.32",
+                    "subCategory": "Veggies",
+                    "bestMatch": {
+                        "category": "Veggies",
+                        "match": "potatis",
+                        "score": 100
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "STANDMJÖLK ESL 1,5L",
+                    "price": "19.50",
+                    "subCategory": "Food Supplies",
+                    "bestMatch": {
+                        "category": "Food Supplies",
+                        "match": "mandelmjolk",
+                        "score": 53
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "SALLADSOST 2st17,90",
+                    "price": "35.80",
+                    "subCategory": "Snacking",
+                    "bestMatch": {
+                        "category": "Snacking",
+                        "match": "hushallsost",
+                        "score": 53
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "SALLADSOST 2st17,90 (discount)",
+                    "price": "-10.80",
+                    "subCategory": "Snacking",
+                    "bestMatch": {
+                        "category": "Snacking",
+                        "match": "hushallsost",
+                        "score": 46
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "KANELSNÄCKA 4st9,90",
+                    "price": "39.60",
+                    "subCategory": "Snacking",
+                    "bestMatch": {
+                        "category": "Snacking",
+                        "match": "kanelsnacka",
+                        "score": 100
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "KANELSNÄCKA 4st9,90 (discount)",
+                    "price": "-24.60",
+                    "subCategory": "Snacking",
+                    "bestMatch": {
+                        "category": "Snacking",
+                        "match": "kanelsnacka",
+                        "score": 100
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "SURKÅL EKO",
+                    "price": "16.90",
+                    "subCategory": "Food Supplies",
+                    "bestMatch": {
+                        "category": "Food Supplies",
+                        "match": "surkal",
+                        "score": 100
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "KYCKLINGKÖTTBULLAR",
+                    "price": "49.90",
+                    "subCategory": "Protein",
+                    "bestMatch": {
+                        "category": "Protein",
+                        "match": "kycklinglar",
+                        "score": 76
+                    },
+                    "category": "food"
+                },
+                {
+                    "name": "KYCKLINGKÖTTBULLAR (discount)",
+                    "price": "-15.00",
+                    "subCategory": "Protein",
+                    "bestMatch": {
+                        "category": "Protein",
+                        "match": "kycklinglar",
+                        "score": 58
+                    },
+                    "category": "food"
                 }
             ]
-        }
+        }]
     )
 
 })
