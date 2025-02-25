@@ -81,7 +81,7 @@ async function convertPriceToIdr(price) {
 function inferCategoryFromName(name) {
     // (later) implement a real category inference
     // most of the items are likely food for now.
-    return 'food';
+    return 'Food';
 }
 
 export function enrichItems(results) {
