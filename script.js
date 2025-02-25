@@ -4,6 +4,8 @@ const resultDiv = document.getElementById('result');
 const logDiv = document.getElementById('log');
 const pdfImagesDiv = document.getElementById('pdf-images');
 const structuredDataDiv = document.getElementById('structured-data');
+const tsvOutputDiv = document.getElementById('tsv-data');
+const downloadButton = document.getElementById('download-tsv');
 
 const {pdfjsLib} = globalThis;
 pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.mjs';
@@ -83,7 +85,7 @@ async function processFiles(file) {
     pdfImagesDiv.appendChild(img);
 
     log('Starting Tesseract.js recognition');
-    const result = await scheduler.addJob('recognize',  imageBlob);
+    const result = await scheduler.addJob('recognize', imageBlob);
     log('Tesseract.js recognition completed');
     allText += result.data.text + '\n\n';
 
@@ -95,7 +97,7 @@ async function processFiles(file) {
     return allText;
 }
 
-function parseLidlOCRResult(text) {
+function parseLidlOcrResult(text) {
     const lines = text.split('\n');
     let items = [];
     let currentItem = null;
@@ -228,11 +230,101 @@ function structureData(ocrText) {
     if (ocrText.match(willysRegex)) {
         return parseWillysOcrResult(ocrText);
     } else if (ocrText.match(lidlRegex)) {
-        return parseLidlOCRResult(ocrText);
+        return parseLidlOcrResult(ocrText);
     } else {
         return {error: 'Unknown store'};
     }
 }
+
+async function fetchExchangeRate() {
+    const localStorageKey = 'exchangeRate';
+    const defaultExchangeRate = 1500;
+    const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+
+    // Check if the exchange rate is in local storage and still valid
+    const cachedRate = localStorage.getItem(localStorageKey);
+    if (cachedRate) {
+        const {rate, timestamp} = JSON.parse(cachedRate);
+        if (Date.now() - timestamp < oneDay) {
+            return rate;
+        }
+    }
+
+    // Fetch the exchange rate from the API
+    try {
+        const response = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2024-03-06/v1/currencies/sek.json');
+        const data = await response.json();
+        const exchangeRate = data.sek.idr;
+
+        // Store the exchange rate in local storage with a timestamp
+        localStorage.setItem(localStorageKey, JSON.stringify({rate: exchangeRate, timestamp: Date.now()}));
+        return exchangeRate;
+    } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        return defaultExchangeRate;
+    }
+}
+
+// Run the function on script load and store the result in a variable
+let exchangeRate;
+(async () => {
+    exchangeRate = await fetchExchangeRate();
+    console.log('Exchange rate:', exchangeRate);
+})();
+
+
+function convertPriceToIdr(price) {
+    return price * exchangeRate;
+}
+
+function inferCategoryFromName(name) {
+    return 'food'; // todo: implement a real category inference
+}
+
+function outputMoneyManagerFormat(data) {
+    /*
+    Money manager backup format consist of tsv format with the following columns:
+
+    ```
+    Date|Account|Category|Subcategory|Note|Amount|Income/Expense|Description|AmountSub|Currency
+    ```
+
+    - Date is in the format of dd/mm/yyyy
+    - Account is always `Cash`
+    - Category is inferred from the item name
+    - Subcategory is also inferred from the item name
+    - Note is the item name
+    - Amount is converted to my main account currency, which is IDR
+    - Income/Expense is always `Expense`
+    - Description is the item name
+    - AmountSub is the price of the item in SEK
+    - Currency is hardcoded to SEK for now
+    */
+
+    const {transaction_date, items} = data;
+    const formattedDate = transaction_date.toISOString().split('T')[0].split('-').reverse().join('/');
+    const output = items.map(item => {
+        const idrAmount = convertPriceToIdr(item.price).toFixed(2);
+        const category = inferCategoryFromName(item.name);
+        const subcategory = category; // todo: implement a real subcategory inference
+        return `${formattedDate}\tCash\t${category}\t${subcategory}\t${item.name}\t${idrAmount}\tExpense\t${item.extraInfo || ''}\t${item.price}\tSEK`;
+    });
+
+    const header = `Date\tAccount\tCategory\tSubcategory\tNote\tAmount\tIncome/Expense\tDescription\tAmountSub\tCurrency`;
+    return header + '\n' + output.join('\n');
+}
+
+function downloadTsv(content, filename) {
+    const contentType = 'text/tab-separated-values'
+    const blob = new Blob([content], {type: contentType});
+    const url = URL.createObjectURL(blob);
+
+    const pom = document.createElement('a');
+    pom.href = url;
+    pom.setAttribute('download', filename);
+    pom.click();
+}
+
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -248,10 +340,9 @@ form.addEventListener('submit', async (e) => {
     try {
         let json_results = [];
 
-        const ocrResults = await Promise.all(
-            Array.from(files).map(async (file) => {
-                return await processFiles(file);}
-        ));
+        const ocrResults = await Promise.all(Array.from(files).map(async (file) => {
+            return await processFiles(file);
+        }));
 
         for (const ocr of ocrResults) {
             const structuredData = structureData(ocr);
@@ -259,7 +350,13 @@ form.addEventListener('submit', async (e) => {
         }
 
         structuredDataDiv.textContent = JSON.stringify(json_results, null, 2);
-        log('Data structuring completed');
+        log('formatting data for Money Manager');
+        tsvOutputDiv.textContent = json_results.map(outputMoneyManagerFormat).join('\n\n');
+
+        downloadButton.addEventListener('click', () => {
+            downloadTsv(tsvOutputDiv.textContent, 'money-manager-export.tsv');
+        });
+
     } catch (error) {
         log(`Error processing files: ${error.message}`);
         resultDiv.textContent = 'Error processing files: ' + error.message;
