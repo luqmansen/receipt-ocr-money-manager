@@ -259,6 +259,9 @@ form.addEventListener('submit', async (e) => {
         } catch (error) {
             log(`Error processing files: ${error.message}`);
             resultDiv.textContent = 'Error processing files: ' + error.message;
+        } finally {
+            log('Processing completed');
+            await scheduler.terminate();
         }
     } else {
         log('No files selected for processing');
