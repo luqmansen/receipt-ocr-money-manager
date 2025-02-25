@@ -1,0 +1,19 @@
+{
+  "name": "receipt-ocr",
+  "version": "1.0.0",
+  "description": "receipt ocr to money-manager",
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build --base=./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "luqmansen@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "pdfjs-dist": "^4.10.38",
+    "tesseract.js": "^6.0.0"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}

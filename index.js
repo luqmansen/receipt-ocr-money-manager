@@ -1,3 +1,10 @@
+import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs';
+import {createScheduler, createWorker} from "tesseract.js";
+// import * as pdfWorker from "pdfjs-dist/build/pdf.worker.mjs";
+// pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+
+
+
 const form = document.getElementById('upload-form');
 const fileInput = document.getElementById('file-input');
 const resultDiv = document.getElementById('result');
@@ -7,27 +14,28 @@ const structuredDataDiv = document.getElementById('structured-data');
 const tsvOutputDiv = document.getElementById('tsv-data');
 const downloadButton = document.getElementById('download-tsv');
 
-const {pdfjsLib} = globalThis;
-pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+// pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-const scheduler = new Tesseract.createScheduler();
+const scheduler = createScheduler();
 
-const worker1 = await Tesseract.createWorker('swe', 1, {
-    langPath: 'https://tessdata.projectnaptha.com/4.0.0_best/',
-    logger: m => log(`Tesseract worker 1: ${m.status} (${(m.progress * 100).toFixed(2)}%)`)
-});
-const worker2 = await Tesseract.createWorker('swe', 1, {
-    langPath: 'https://tessdata.projectnaptha.com/4.0.0_best/',
-    logger: m => log(`Tesseract worker 2: ${m.status} (${(m.progress * 100).toFixed(2)}%)`)
-});
-const worker3 = await Tesseract.createWorker('swe', 1, {
-    langPath: 'https://tessdata.projectnaptha.com/4.0.0_best/',
-    logger: m => log(`Tesseract worker 3: ${m.status} (${(m.progress * 100).toFixed(2)}%)`)
-});
+async function prepareWorker(num) {
+    return await createWorker('swe', 1, {
+        langPath: 'https://tessdata.projectnaptha.com/4.0.0_best/',
+        logger: m => log(`Tesseract worker ${num}: ${m.status} (${(m.progress * 100).toFixed(2)}%)`)
+    }).then(worker => {
+        scheduler.addWorker(worker);
+    });
+}
 
-scheduler.addWorker(worker1);
-scheduler.addWorker(worker2);
-scheduler.addWorker(worker3);
+(async () => {
+    return await prepareWorker(1)
+})();
+
+(async () => {
+    return await prepareWorker(2)
+})();
+
 
 
 function log(message) {
@@ -281,7 +289,7 @@ function inferCategoryFromName(name) {
     return 'food'; // todo: implement a real category inference
 }
 
-function outputMoneyManagerFormat(data) {
+function outputMoneyManagerFormat(results) {
     /*
     Money manager backup format consist of tsv format with the following columns:
 
@@ -301,17 +309,22 @@ function outputMoneyManagerFormat(data) {
     - Currency is hardcoded to SEK for now
     */
 
-    const {transaction_date, items} = data;
-    const formattedDate = transaction_date.toISOString().split('T')[0].split('-').reverse().join('/');
-    const output = items.map(item => {
-        const idrAmount = convertPriceToIdr(item.price).toFixed(2);
-        const category = inferCategoryFromName(item.name);
-        const subcategory = category; // todo: implement a real subcategory inference
-        return `${formattedDate}\tCash\t${category}\t${subcategory}\t${item.name}\t${idrAmount}\tExpense\t${item.extraInfo || ''}\t${item.price}\tSEK`;
-    });
+    let final_data = []
 
-    const header = `Date\tAccount\tCategory\tSubcategory\tNote\tAmount\tIncome/Expense\tDescription\tAmountSub\tCurrency`;
-    return header + '\n' + output.join('\n');
+    for (const data of results) {
+        const {transaction_date, items} = data;
+        const formattedDate = transaction_date.toISOString().split('T')[0].split('-').reverse().join('/');
+        const output = items.map(item => {
+            const idrAmount = convertPriceToIdr(item.price).toFixed(2);
+            const category = inferCategoryFromName(item.name);
+            const subcategory = category; // todo: implement a real subcategory inference
+            return `${formattedDate}\tCash\t${category}\t${subcategory}\t${item.name}\t${idrAmount}\tExpense\t${item.extraInfo || ''}\t${item.price}\tSEK`;
+        });
+        final_data = final_data.concat(output);
+    }
+
+    const header = "Date\tAccount\tCategory\tSubcategory\tNote\tAmount\tIncome/Expense\tDescription\tAmountSub\tCurrency";
+    return header + '\n' + final_data.join("\n");
 }
 
 function downloadTsv(content, filename) {
@@ -337,33 +350,28 @@ form.addEventListener('submit', async (e) => {
         return;
     }
 
-    try {
-        let json_results = [];
+    let json_results = [];
 
-        const ocrResults = await Promise.all(Array.from(files).map(async (file) => {
-            return await processFiles(file);
-        }));
+    const futures =Array.from(files).map(async (file) => {
+        return await processFiles(file);
+    });
+    const ocrResults = await Promise.all(futures);
 
-        for (const ocr of ocrResults) {
-            const structuredData = structureData(ocr);
-            json_results.push(structuredData);
-        }
-
-        structuredDataDiv.textContent = JSON.stringify(json_results, null, 2);
-        log('formatting data for Money Manager');
-        tsvOutputDiv.textContent = json_results.map(outputMoneyManagerFormat).join('\n\n');
-
-        downloadButton.addEventListener('click', () => {
-            downloadTsv(tsvOutputDiv.textContent, 'money-manager-export.tsv');
-        });
-
-    } catch (error) {
-        log(`Error processing files: ${error.message}`);
-        resultDiv.textContent = 'Error processing files: ' + error.message;
-    } finally {
-        log('Processing completed');
-        await scheduler.terminate();
+    for (const ocr of ocrResults) {
+        const structuredData = structureData(ocr);
+        json_results.push(structuredData);
     }
+
+    structuredDataDiv.textContent = JSON.stringify(json_results, null, 2);
+    log('formatting data for Money Manager');
+    tsvOutputDiv.textContent = outputMoneyManagerFormat(json_results);
+
+    downloadButton.addEventListener('click', () => {
+        downloadTsv(tsvOutputDiv.textContent, 'money-manager-export.tsv');
+    });
+
+    log('Processing completed');
+    await scheduler.terminate();
 });
 
 log('Page loaded and ready');
