@@ -46,6 +46,14 @@
             max-height: 1000px;
             margin-right: 10px;
         }
+
+        #tsv-data {
+            white-space: pre;
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -62,5 +70,8 @@
 <div id="result"></div>
 <h2>Parsed Data:</h2>
 <div id="structured-data"></div>
+<h2>TSV format:</h2>
+<div id="tsv-data"></div>
+<button id="download-tsv">Download TSV</button>
 </body>
 </html>
