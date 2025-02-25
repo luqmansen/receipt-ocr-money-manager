@@ -134,7 +134,7 @@ const beveragesSource = [{
 }, {
     "category": "Beverages",
     "sub_category": "Dairy & Plant-Based Drinks",
-    "items": ["mjölk", "mjölken", "chokladmjölk", "chokladmjölken", "jordgubbsmjölk", "jordgubbsmjölken", "mandelmjölk", "mandelmjölken", "havremjölk", "havremjölken", "sojamjölk", "sojamjölken", "kokosmjölk", "kokosmjölken", "fil", "filen", "yoghurtdrink", "yoghurtdrinken", "långfil", "långfilen", "filmjölk", "filmjölken"]
+    "items": ["Standardmjölk","mjölk", "mjölken", "chokladmjölk", "chokladmjölken", "jordgubbsmjölk", "jordgubbsmjölken", "mandelmjölk", "mandelmjölken", "havremjölk", "havremjölken", "sojamjölk", "sojamjölken", "kokosmjölk", "kokosmjölken", "fil", "filen", "yoghurtdrink", "yoghurtdrinken", "långfil", "långfilen", "filmjölk", "filmjölken"]
 }, {
     "category": "Beverages",
     "sub_category": "Alcoholic Beverages",
