@@ -1,4 +1,3 @@
-// import Snowball from 'snowball';
 import * as fuzz from 'fuzzball';
 import {createScheduler, createWorker} from "tesseract.js";
 import {categories} from './dictionary.js';
@@ -321,7 +320,7 @@ export function parseLidlOcrResult(text) {
 
     const dateString = match[0];
     // Note: JavaScript interprets date strings in UTC by default
-    const date = new Date(dateString);
+    const date = new Date(dateString + ' GMT+0100');
     return {
         transaction_date: date, items: items
     };
@@ -365,7 +364,7 @@ export function parseWillysOcrResult(ocrText) {
     }
     const dateMatch = lines[lines.length - 1].match(dateRegex);
     if (dateMatch) {
-        transactionDate = new Date(dateMatch[1]);
+        transactionDate = new Date(dateMatch[1] + ' GMT+0100');
     } else {
         log('Date not found in the OCR text');
     }
