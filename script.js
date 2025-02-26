@@ -237,7 +237,7 @@ export async function processFiles(file) {
         log(`Processing PDF: ${file.name}`);
         imageBlob = await convertPdfToImage(file);
     } else if (!file.type.startsWith('image/')) {
-        alert('file type not supported');
+        alert('file type not supported: ' + file.type);
     }
 
     const img = document.createElement('img');
