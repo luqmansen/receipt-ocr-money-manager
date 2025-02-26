@@ -4,7 +4,7 @@
   "description": "receipt ocr to money-manager",
   "main": "index.js",
   "scripts": {
-    "commit-sha": "COMMIT_SHA=$(git rev-parse --short HEAD) && sed -i -e \"s/%COMMIT_SHA%/$COMMIT_SHA/\" docs/index.html",
+    "commit-sha": "COMMIT_SHA=$(git log -1 --pretty=format:\"%h (%s)\") && sed -i -e \"s/%COMMIT_SHA%/$COMMIT_SHA/\" docs/index.html",
     "build_date": "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S') && sed -i -e \"s/%BUILD_DATE%/$BUILD_DATE/\" docs/index.html ",
     "build": "vite build --base=./ && npm run commit-sha && npm run build_date",
     "test": "vitest --environment=jsdom"
