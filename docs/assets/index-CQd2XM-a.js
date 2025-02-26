@@ -25308,7 +25308,7 @@ async function outputMoneyManagerFormat(results) {
   let final_data = [];
   for (const data of results) {
     const { transaction_date, items } = data;
-    const formattedDate = transaction_date.toISOString().split("T")[0].split("-").reverse().join("/");
+    const formattedDate = transaction_date.toLocaleDateString("en-GB").split("/").reverse().join("/");
     const output = await Promise.all(items.map(async (item) => {
       const idrAmount = (await convertPriceToIdr(item.price)).toFixed(2);
       const dump = JSON.stringify(item.bestMatch);
@@ -25473,7 +25473,7 @@ function parseLidlOcrResult(text) {
     return { name: item.name, price: item.price.toFixed(2) };
   });
   const dateString = match[0];
-  const date = /* @__PURE__ */ new Date(dateString + " GMT+0100");
+  const date = /* @__PURE__ */ new Date(dateString + "T00:00:00");
   return {
     transaction_date: date,
     items
@@ -25513,7 +25513,7 @@ function parseWillysOcrResult(ocrText) {
   }
   const dateMatch = lines[lines.length - 1].match(dateRegex);
   if (dateMatch) {
-    transactionDate = /* @__PURE__ */ new Date(dateMatch[1] + " GMT+0100");
+    transactionDate = /* @__PURE__ */ new Date(dateMatch[1] + "T00:00:00");
   } else {
     log("Date not found in the OCR text");
   }
