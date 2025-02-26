@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Receipt OCR to Money Manager</title>
-    <script src="index.js" type="module"></script>
 
     <style>
         body {
@@ -53,6 +52,7 @@
             overflow-y: auto;
         }
     </style>
+  <script type="module" crossorigin src="./assets/index-CCK2bVXK.js"></script>
 </head>
 <body>
 <h1>Receipt OCR to Money Manager</h1>
@@ -81,7 +81,7 @@
 <button id="download-tsv">Download TSV</button>
 
 <p>
-    %COMMIT_SHA%<br>
+    392e35d<br>
     %BUILD_DATE%<br>
 </p>
 </body>
