@@ -25473,7 +25473,7 @@ function parseLidlOcrResult(text) {
     return { name: item.name, price: item.price.toFixed(2) };
   });
   const dateString = match[0];
-  const date = new Date(dateString);
+  const date = /* @__PURE__ */ new Date(dateString + " GMT+0100");
   return {
     transaction_date: date,
     items
@@ -25513,7 +25513,7 @@ function parseWillysOcrResult(ocrText) {
   }
   const dateMatch = lines[lines.length - 1].match(dateRegex);
   if (dateMatch) {
-    transactionDate = new Date(dateMatch[1]);
+    transactionDate = /* @__PURE__ */ new Date(dateMatch[1] + " GMT+0100");
   } else {
     log("Date not found in the OCR text");
   }
