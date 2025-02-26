@@ -3,7 +3,7 @@ name: Rebuild and Commit
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
