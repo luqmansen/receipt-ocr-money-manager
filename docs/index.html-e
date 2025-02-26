@@ -55,8 +55,9 @@
   <script type="module" crossorigin src="./assets/index-DvsWWz3q.js"></script>
 </head>
 <body>
-<h1>Receipt OCR to Money Manager</h1>
-<h3><a href="https://github.com/luqmansen/receipt-ocr-money-manager" target="_blank">https://github.com/luqmansen/receipt-ocr-money-manager</a></h3>
+<h1>Receipt OCR to Money Manager
+</h1>
+<p><a href="https://github.com/luqmansen/receipt-ocr-money-manager" target="_blank">https://github.com/luqmansen/receipt-ocr-money-manager</a></p>
 <p>Upload images or PDFs of receipts and convert them to importable `tsv` files for <a target="_blank" href="https://www.realbyteapps.com/">Money Manager</a>.
     <br>
     <ul>
@@ -82,7 +83,7 @@
 <button id="download-tsv">Download TSV</button>
 
 <p>
-    41c9533<br>
+    64a9ce6<br>
     %BUILD_DATE%<br>
 </p>
 </body>
