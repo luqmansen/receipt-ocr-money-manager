@@ -146,7 +146,7 @@ const beveragesSource = [{
 }, {
     "category": "Beverages",
     "sub_category": "Other Beverages",
-    "items": ["smoothie", "smoothien", "saft", "saften", "blanddryck", "blanddrycken", "kall kaffe", "kalla kaffet", "kall chai", "kalla chain", "is-te", "is-teet", "kolsyrad juice", "kolsyrade juicen", "kolsyrad te", "kolsyrade teet", "kolsyrad kaffe", "kolsyrade kaffet", "SHOT INGEF/GURKM",]
+    "items": ["pant", "pantburk","smoothie", "smoothien", "saft", "saften", "blanddryck", "blanddrycken", "kall kaffe", "kalla kaffet", "kall chai", "kalla chain", "is-te", "is-teet", "kolsyrad juice", "kolsyrade juicen", "kolsyrad te", "kolsyrade teet", "kolsyrad kaffe", "kolsyrade kaffet", "SHOT INGEF/GURKM",]
 }]
 const beverages = merge(beveragesSource)
 
