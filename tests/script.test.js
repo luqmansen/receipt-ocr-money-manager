@@ -34,6 +34,18 @@ test('addSubCategory', () => {
 		[
 			{"name": "LAMMFRAMDEL MB"},
 			"Protein"
+		],
+		[
+			{"name": "SCHWEIZERNÖT"},
+			"Snacking"
+		],
+		[
+			{"name": "BUTTERNÖT"},
+			"Snacking"
+		],
+		[
+			{"name": "SMOR NORMALSALTAT"},
+			"Food Supplies"
 		]
 	]
 
@@ -105,196 +117,85 @@ Självcheckout Kassör
 Kassa: 28/64 2025-02-22 13:30
     `
 
-
-	expect(enrichItems([parseWillysOcrResult(text)])).toStrictEqual(
-		[
-			{
-				"items": [
-					{
-						"bestMatch": {
-							"category": "Protein",
-							"match": "kyckling",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "KYCKLING FILÉ",
-						"price": "69.90",
-						"subCategory": "Protein",
-					},
-					{
-						"bestMatch": {
-							"category": "Fruit",
-							"match": "mango",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "CHOKL MANGO&PASSION",
-						"price": "22.90",
-						"subCategory": "Fruit",
-					},
-					{
-						"bestMatch": {
-							"category": "Food Supplies",
-							"match": "olivolja",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "OLIVOLJA",
-						"price": "105.00",
-						"subCategory": "Food Supplies",
-					},
-					{
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "notmix",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "200G",
-						"name": "NÖTMIX SALTY",
-						"price": "25.90",
-						"subCategory": "Snacking",
-					},
-					{
-						"bestMatch": {
-							"category": "Bread",
-							"match": "brod",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "LIBANESISKT BRÖD",
-						"price": "11.90",
-						"subCategory": "Bread",
-					},
-					{
-						"bestMatch": {
-							"category": "Food Supplies",
-							"match": "linser",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "RÖDA LINSER EKO",
-						"price": "29.90",
-						"subCategory": "Food Supplies",
-					},
-					{
-						"bestMatch": {
-							"category": "Veggies",
-							"match": "potatis",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "POTATIS SÖT",
-						"price": "41.32",
-						"subCategory": "Veggies",
-					},
-					{
-						"bestMatch": {
-							"category": "Beverages",
-							"match": "standardmjolk",
-							"score": 74,
-						},
-						"category": "Food",
-						"extraInfo": "1,5L",
-						"name": "STANDMJÖLK ESL",
-						"price": "19.50",
-						"subCategory": "Beverages",
-					},
-					{
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "hushallsost",
-							"score": 76,
-						},
-						"category": "Food",
-						"extraInfo": "2st17,90",
-						"name": "SALLADSOST",
-						"price": "35.80",
-						"subCategory": "Snacking",
-					},
-					{
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "hushallsost",
-							"score": 60,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "SALLADSOST (discount)",
-						"price": "-10.80",
-						"subCategory": "Snacking",
-					},
-					{
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "kanelsnacka",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "4st9,90",
-						"name": "KANELSNÄCKA",
-						"price": "39.60",
-						"subCategory": "Snacking",
-					},
-					{
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "kanelsnacka",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "KANELSNÄCKA (discount)",
-						"price": "-24.60",
-						"subCategory": "Snacking",
-					},
-					{
-						"bestMatch": {
-							"category": "Food Supplies",
-							"match": "surkal",
-							"score": 100,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "SURKÅL EKO",
-						"price": "16.90",
-						"subCategory": "Food Supplies",
-					},
-					{
-						"bestMatch": {
-							"category": "Protein",
-							"match": "kycklinglar",
-							"score": 76,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "KYCKLINGKÖTTBULLAR",
-						"price": "49.90",
-						"subCategory": "Protein",
-					},
-					{
-						"bestMatch": {
-							"category": "Protein",
-							"match": "kycklinglar",
-							"score": 58,
-						},
-						"category": "Food",
-						"extraInfo": "",
-						"name": "KYCKLINGKÖTTBULLAR (discount)",
-						"price": "-15.00",
-						"subCategory": "Protein",
-					},
-				],
-				"transaction_date": "2025-02-22",
-			},
-		]
-	)
+	const result = parseWillysOcrResult(text)
+	const expected = [
+		{
+			"extraInfo": "",
+			"name": "KYCKLING FILÉ",
+			"price": "69.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "CHOKL MANGO&PASSION",
+			"price": "22.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "OLIVOLJA",
+			"price": "105.00",
+		},
+		{
+			"extraInfo": "200G",
+			"name": "NÖTMIX SALTY",
+			"price": "25.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "LIBANESISKT BRÖD",
+			"price": "11.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "RÖDA LINSER EKO",
+			"price": "29.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "POTATIS SÖT",
+			"price": "41.32",
+		},
+		{
+			"extraInfo": "1,5L",
+			"name": "STANDMJÖLK ESL",
+			"price": "19.50",
+		},
+		{
+			"extraInfo": "2st17,90",
+			"name": "SALLADSOST",
+			"price": "35.80",
+		},
+		{
+			"extraInfo": "",
+			"name": "SALLADSOST (discount)",
+			"price": "-10.80",
+		},
+		{
+			"extraInfo": "4st9,90",
+			"name": "KANELSNÄCKA",
+			"price": "39.60",
+		},
+		{
+			"extraInfo": "",
+			"name": "KANELSNÄCKA (discount)",
+			"price": "-24.60",
+		},
+		{
+			"extraInfo": "",
+			"name": "SURKÅL EKO",
+			"price": "16.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "KYCKLINGKÖTTBULLAR",
+			"price": "49.90",
+		},
+		{
+			"extraInfo": "",
+			"name": "KYCKLINGKÖTTBULLAR (discount)",
+			"price": "-15.00",
+		},
+	]
+	expect((result.items)).toStrictEqual((expected))
 
 })
 

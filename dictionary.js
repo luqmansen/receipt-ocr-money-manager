@@ -890,6 +890,8 @@ const fikabread = [
 	"Burek spenat feta"
 ]
 const snacks = [
+	"NÖT",
+	"SCHWEIZERNÖT",
 	"NÖTMIX",
 	"NÖTMIX SALTY",
 	"CHOKL MANGO&PASSION",

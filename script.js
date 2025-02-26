@@ -42,7 +42,7 @@ export function addSubCategory(item, debug = false) {
 
 	let debugMatches = [];
 
-	const options = {scorer: fuzz.token_set_ratio};
+	const options = {scorer: fuzz.WRatio};
 	const processedItem = preprocess(item.name);
 	let bestMatch = {category: '', score: 0};
 	for (const [category, choices] of Object.entries(preprocessedCategories)) {

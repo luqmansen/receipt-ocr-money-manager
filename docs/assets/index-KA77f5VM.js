@@ -22896,18 +22896,18 @@ var be, me, xe, we = _e.exports, je = { exports: {} };
       }
       Pe2 = void 0;
     }
-    var De2 = Pe2 && Pe2.isMap, We2 = Pe2 && Pe2.isSet, Ge = Pe2 && Pe2.isTypedArray, Qe = Array.prototype, Ve = Object.prototype, Ye2 = Xe2["__core-js_shared__"], Ze = Function.prototype.toString, Ke = Ve.hasOwnProperty, Je = function() {
-      var se3 = /[^.]+$/.exec(Ye2 && Ye2.keys && Ye2.keys.IE_PROTO || "");
+    var De2 = Pe2 && Pe2.isMap, We2 = Pe2 && Pe2.isSet, Ge = Pe2 && Pe2.isTypedArray, Qe = Array.prototype, Ve = Object.prototype, Ye = Xe2["__core-js_shared__"], Ze = Function.prototype.toString, Ke = Ve.hasOwnProperty, Je = function() {
+      var se3 = /[^.]+$/.exec(Ye && Ye.keys && Ye.keys.IE_PROTO || "");
       return se3 ? "Symbol(src)_1." + se3 : "";
-    }(), er = Ve.toString, tr = RegExp("^" + Ze.call(Ke).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), rr = He2 ? Xe2.Buffer : de2, nr = Xe2.Symbol, or2 = Xe2.Uint8Array;
-    rr ? rr.f : de2;
+    }(), er = Ve.toString, tr = RegExp("^" + Ze.call(Ke).replace(/[\\^$.*+?()[\]{}|]/g, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"), rr2 = He2 ? Xe2.Buffer : de2, nr = Xe2.Symbol, or2 = Xe2.Uint8Array;
+    rr2 ? rr2.f : de2;
     var ir = y(Object.getPrototypeOf), cr = Object.create, ur = Ve.propertyIsEnumerable, sr = Qe.splice, lr = nr ? nr.isConcatSpreadable : de2, fr = nr ? nr.iterator : de2, pr = nr ? nr.toStringTag : de2, hr = function() {
       try {
         var se3 = mt(Object, "defineProperty");
         return se3({}, "", {}), se3;
       } catch (se4) {
       }
-    }(), dr = Object.getOwnPropertySymbols, gr = rr ? rr.isBuffer : de2, vr = y(Object.keys), yr = Math.max, _r = Math.min, br = Date.now, mr = mt(Xe2, "DataView"), xr = mt(Xe2, "Map"), wr = mt(Xe2, "Promise"), jr = mt(Xe2, "Set"), kr = mt(Xe2, "WeakMap"), Er = mt(Object, "create"), Ar = kr && new kr(), Sr = {}, Or = Bt(mr), Cr = Bt(xr), Ir = Bt(wr), zr = Bt(jr), $r = Bt(kr), Mr = nr ? nr.prototype : de2, Nr = Mr ? Mr.valueOf : de2, Pr = Mr ? Mr.toString : de2, Fr = /* @__PURE__ */ function() {
+    }(), dr = Object.getOwnPropertySymbols, gr = rr2 ? rr2.isBuffer : de2, vr = y(Object.keys), yr = Math.max, _r = Math.min, br = Date.now, mr = mt(Xe2, "DataView"), xr = mt(Xe2, "Map"), wr = mt(Xe2, "Promise"), jr = mt(Xe2, "Set"), kr = mt(Xe2, "WeakMap"), Er = mt(Object, "create"), Ar = kr && new kr(), Sr = {}, Or = Bt(mr), Cr = Bt(xr), Ir = Bt(wr), zr = Bt(jr), $r = Bt(kr), Mr = nr ? nr.prototype : de2, Nr = Mr ? Mr.valueOf : de2, Pr = Mr ? Mr.toString : de2, Fr = /* @__PURE__ */ function() {
       function t2() {
       }
       return function(se3) {
@@ -23776,7 +23776,7 @@ var Ue = He, De = { exports: {} };
     var Te3 = [Fe3(Ee2, Ne3, he2), Fe3(Ee2, Pe3, he2), Fe3(Ne3, Pe3, he2)];
     return he2.trySimple && Te3.push(Fe3(se3, pe3, he2)), Math.max.apply(null, Te3);
   }
-  var Ge, Qe, Ve, Ye2, Ze = false;
+  var Ge, Qe, Ve, Ye, Ze = false;
   function _ratio(pe3, he2, de3) {
     if (!Pe2(pe3)) return 0;
     if (!Pe2(he2)) return 0;
@@ -23799,11 +23799,11 @@ var Ue = He, De = { exports: {} };
     }
     return Math.max.apply(null, _e3);
   }
-  Object.keys || (Object.keys = (Ge = Object.prototype.hasOwnProperty, Qe = !{ toString: null }.propertyIsEnumerable("toString"), Ye2 = (Ve = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "constructor"]).length, function(se3) {
+  Object.keys || (Object.keys = (Ge = Object.prototype.hasOwnProperty, Qe = !{ toString: null }.propertyIsEnumerable("toString"), Ye = (Ve = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "constructor"]).length, function(se3) {
     if ("object" != typeof se3 && ("function" != typeof se3 || null === se3)) throw new TypeError("Object.keys called on non-object");
     var pe3, he2, de3 = [];
     for (pe3 in se3) Ge.call(se3, pe3) && de3.push(pe3);
-    if (Qe) for (he2 = 0; he2 < Ye2; he2++) Ge.call(se3, Ve[he2]) && de3.push(Ve[he2]);
+    if (Qe) for (he2 = 0; he2 < Ye; he2++) Ge.call(se3, Ve[he2]) && de3.push(Ve[he2]);
     return de3;
   }));
   var Ke = void 0;
@@ -23844,13 +23844,13 @@ var We = he.exports;
 We.distance;
 We.ratio;
 We.partial_ratio;
-const Ye = We.token_set_ratio;
+We.token_set_ratio;
 We.token_sort_ratio;
 We.partial_token_set_ratio;
 We.partial_token_sort_ratio;
 We.token_similarity_sort_ratio;
 We.partial_token_similarity_sort_ratio;
-We.WRatio;
+const rr = We.WRatio;
 We.full_process;
 const or = We.extract;
 We.extractAsync;
@@ -25977,6 +25977,8 @@ const fikabread = [
   "Burek spenat feta"
 ];
 const snacks = [
+  "NÖT",
+  "SCHWEIZERNÖT",
   "NÖTMIX",
   "NÖTMIX SALTY",
   "CHOKL MANGO&PASSION",
@@ -34350,7 +34352,7 @@ function preprocess(text) {
 }
 function addSubCategory(item, debug = false) {
   let debugMatches = [];
-  const options = { scorer: Ye };
+  const options = { scorer: rr };
   const processedItem = preprocess(item.name);
   let bestMatch = { category: "", score: 0 };
   for (const [category, choices] of Object.entries(preprocessedCategories)) {
