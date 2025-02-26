@@ -4,135 +4,58 @@ import {
 	enrichItems,
 	outputMoneyManagerFormat,
 	parseWillysOcrResult,
-	parseOCR
+	parseOCR, preprocessedCategories
 } from "../script";
+import * as fuzz from "fuzzball";
 
 test('addSubCategory', () => {
-	expect(addSubCategory(
-		{
-			"name": "SHOT INGEF/GURKM",
-			"price": "43.90"
-		}
-	)).toStrictEqual(
-		{
-			"bestMatch": {
-				"category": "Beverages",
-				"match": "shot ingef/gurkm",
-				"score": 100,
-			},
-			"name": "SHOT INGEF/GURKM",
-			"price": "43.90",
-			"subCategory": "Beverages",
-		}
-	)
+	// pair of items and expected  subcategory
+	const tests = [
+		[
+			{"name": "SHOT INGEF/GURKM"},
+			"Beverages"
+		],
+		[
+			{"name": "ÖVERLÅR KYCKLING"},
+			"Protein"
+		],
+		[
+			{"name": "GORGONZOLA"},
+			"Snacking"
+		],
+		[
+			{"name": "LIBANESISKT BRÖD"},
+			"Bread"
+		],
+		[
+			{"name": "RÖDA LINSER EKO"},
+			"Food Supplies"
+		],
+		[
+			{"name": "LAMMFRAMDEL MB"},
+			"Protein"
+		]
+	]
+
+	for (const [i, [item, expectedSubCategory]] of tests.entries()) {
+		expect(addSubCategory(item)['subCategory'], JSON.stringify(addSubCategory(item, true))).toStrictEqual(
+			expectedSubCategory,
+		)
+	}
 })
 
-test('addSubCategory2', () => {
-	const a = addSubCategory(
-		{
-			name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg',
-			price: '304.44'
-		})
-
-	console.log(a)
-	// expect(addSubCategory(
-	// 	{
-	// 				name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg',
-	// 				price: '304.44'
-	// 			}
-	// )).toStrictEqual(
-	// 	{
-	// 		"bestMatch": {
-	// 			"category": "Meat & Seafood",
-	// 			"match": "kyckling",
-	// 			"score": 100,
-	// 		},
-	// 		"name": "ÖVERLÅR KYCKLING 2st49,90",
-	// 		"price": "99.80",
-	// 		"subCategory": "Poultry",
-	// 	}
-	// )
+test('fuzzyMatch', () => {
+	let results = []
+	for (const [category, choices] of Object.entries(preprocessedCategories)) {
+		results = [
+			...results,
+			...fuzz.extract("LAMMFRAMDEL 2,360kg+129,00kr/kg", choices, {scorer: fuzz.token_set_ratio})
+		]
+	}
+	// console.log(results.sort((a, b) => b[1] - a[1]))
+	// console.log(fuzz.partial_token_set_ratio("LIBANESISKT BRÖD", "LIBANESISKT BRÖD"))
 })
 
-// test('enrichItems', () => {
-//     let items = [
-//         {
-//             "transaction_date": "2025-02-14T14:11:00.000Z",
-//             "items": [
-//                 {
-//                     "name": "SHOT INGEF/GURKM",
-//                     "price": "43.90"
-//                 },
-//                 {
-//                     "name": "ÖVERLÅR KYCKLING 2st49,90",
-//                     "price": "99.80"
-//                 },
-//                 {
-//                     "name": "GORGONZOLA",
-//                     "price": "29.90"
-//                 },
-//                 {
-//                     "name": "BONDBÖNOR 450G",
-//                     "price": "24.90"
-//                 },
-//                 {
-//                     "name": "BROCCOLI",
-//                     "price": "9.90"
-//                 },
-//                 {
-//                     "name": "JORDGUBBAR 250G 3st+44,90",
-//                     "price": "59.70"
-//                 }
-//             ]
-//         }
-//     ]
-//
-//     expect(enrichItems(items)).toStrictEqual(
-//         [
-//             {
-//                 "transaction_date": new Date("2025-02-14T14:11:00.000Z"),
-//                 "items": [
-//                     {
-//                         "name": "SHOT INGEF/GURKM",
-//                         "price": "43.90",
-//                         "category": "Fruits & Vegetables",
-//                         "sub_category": "food"
-//                     },
-//                     {
-//                         "name": "ÖVERLÅR KYCKLING 2st49,90",
-//                         "price": "99.80",
-//                         "category": "Meat & Seafood",
-//                         "sub_category": "Poultry"
-//                     },
-//                     {
-//                         "name": "GORGONZOLA",
-//                         "price": "29.90",
-//                         "category": "Dairy & Eggs",
-//                         "sub_category": "Cheese"
-//                     },
-//                     {
-//                         "name": "BONDBÖNOR 450G",
-//                         "price": "24.90",
-//                         "category": "Pantry Staples",
-//                         "sub_category": "Grains & Pasta"
-//                     },
-//                     {
-//                         "name": "BROCCOLI",
-//                         "price": "9.90",
-//                         "category": "Fruits & Vegetables",
-//                         "sub_category": "Vegetables"
-//                     },
-//                     {
-//                         "name": "JORDGUBBAR 250G 3st+44,90",
-//                         "price": "59.70",
-//                         "category": "Fruits & Vegetables",
-//                         "sub_category": "Fruits"
-//                     }
-//                 ]
-//             }
-//         ]
-//     )
-// })
 
 test('parseWillysOcr', () => {
 	const text = `
@@ -186,175 +109,190 @@ Kassa: 28/64 2025-02-22 13:30
 	expect(enrichItems([parseWillysOcrResult(text)])).toStrictEqual(
 		[
 			{
-				"transaction_date": "2025-02-22", // locale sv-SE string format
 				"items": [
 					{
-						"name": "KYCKLING FILÉ",
-						"price": "69.90",
-						"subCategory": "Protein",
 						"bestMatch": {
 							"category": "Protein",
 							"match": "kyckling",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "KYCKLING FILÉ",
+						"price": "69.90",
+						"subCategory": "Protein",
 					},
 					{
-						"name": "CHOKL MANGO&PASSION",
-						"price": "22.90",
-						"subCategory": "Fruit",
 						"bestMatch": {
 							"category": "Fruit",
 							"match": "mango",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "CHOKL MANGO&PASSION",
+						"price": "22.90",
+						"subCategory": "Fruit",
 					},
 					{
-						"name": "OLIVOLJA",
-						"price": "105.00",
-						"subCategory": "Food Supplies",
 						"bestMatch": {
 							"category": "Food Supplies",
 							"match": "olivolja",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "OLIVOLJA",
+						"price": "105.00",
+						"subCategory": "Food Supplies",
 					},
 					{
-						"name": "NÖTMIX SALTY 200G",
-						"price": "25.90",
-						"subCategory": "Snacking",
 						"bestMatch": {
 							"category": "Snacking",
-							"match": "notskalsost",
-							"score": 50
+							"match": "notmix",
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "200G",
+						"name": "NÖTMIX SALTY",
+						"price": "25.90",
+						"subCategory": "Snacking",
 					},
 					{
-						"name": "LIBANESISKT BRÖD",
-						"price": "11.90",
-						"subCategory": "Bread",
 						"bestMatch": {
 							"category": "Bread",
 							"match": "brod",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "LIBANESISKT BRÖD",
+						"price": "11.90",
+						"subCategory": "Bread",
 					},
 					{
-						"name": "RÖDA LINSER EKO",
-						"price": "29.90",
-						"subCategory": "Food Supplies",
 						"bestMatch": {
 							"category": "Food Supplies",
 							"match": "linser",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "RÖDA LINSER EKO",
+						"price": "29.90",
+						"subCategory": "Food Supplies",
 					},
 					{
-						"name": "POTATIS SÖT",
-						"price": "41.32",
-						"subCategory": "Veggies",
 						"bestMatch": {
 							"category": "Veggies",
 							"match": "potatis",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "POTATIS SÖT",
+						"price": "41.32",
+						"subCategory": "Veggies",
 					},
 					{
-						"name": "STANDMJÖLK ESL 1,5L",
-						"price": "19.50",
-						"subCategory": "Beverages",
 						"bestMatch": {
 							"category": "Beverages",
 							"match": "standardmjolk",
-							"score": 63
+							"score": 74,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "1,5L",
+						"name": "STANDMJÖLK ESL",
+						"price": "19.50",
+						"subCategory": "Beverages",
 					},
 					{
-						"name": "SALLADSOST 2st17,90",
+						"bestMatch": {
+							"category": "Snacking",
+							"match": "hushallsost",
+							"score": 76,
+						},
+						"category": "Food",
+						"extraInfoMatch": "2st17,90",
+						"name": "SALLADSOST",
 						"price": "35.80",
 						"subCategory": "Snacking",
+					},
+					{
 						"bestMatch": {
 							"category": "Snacking",
 							"match": "hushallsost",
-							"score": 53
+							"score": 60,
 						},
-						"category": "Food"
-					},
-					{
-						"name": "SALLADSOST 2st17,90 (discount)",
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "SALLADSOST (discount)",
 						"price": "-10.80",
 						"subCategory": "Snacking",
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "hushallsost",
-							"score": 46
-						},
-						"category": "Food"
 					},
 					{
-						"name": "KANELSNÄCKA 4st9,90",
+						"bestMatch": {
+							"category": "Snacking",
+							"match": "kanelsnacka",
+							"score": 100,
+						},
+						"category": "Food",
+						"extraInfoMatch": "4st9,90",
+						"name": "KANELSNÄCKA",
 						"price": "39.60",
 						"subCategory": "Snacking",
+					},
+					{
 						"bestMatch": {
 							"category": "Snacking",
 							"match": "kanelsnacka",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
-					},
-					{
-						"name": "KANELSNÄCKA 4st9,90 (discount)",
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "KANELSNÄCKA (discount)",
 						"price": "-24.60",
 						"subCategory": "Snacking",
-						"bestMatch": {
-							"category": "Snacking",
-							"match": "kanelsnacka",
-							"score": 100
-						},
-						"category": "Food"
 					},
 					{
-						"name": "SURKÅL EKO",
-						"price": "16.90",
-						"subCategory": "Food Supplies",
 						"bestMatch": {
 							"category": "Food Supplies",
 							"match": "surkal",
-							"score": 100
+							"score": 100,
 						},
-						"category": "Food"
+						"category": "Food",
+						"extraInfoMatch": "",
+						"name": "SURKÅL EKO",
+						"price": "16.90",
+						"subCategory": "Food Supplies",
 					},
 					{
+						"bestMatch": {
+							"category": "Protein",
+							"match": "kycklinglar",
+							"score": 76,
+						},
+						"category": "Food",
+						"extraInfoMatch": "",
 						"name": "KYCKLINGKÖTTBULLAR",
 						"price": "49.90",
 						"subCategory": "Protein",
+					},
+					{
 						"bestMatch": {
 							"category": "Protein",
 							"match": "kycklinglar",
-							"score": 76
+							"score": 58,
 						},
-						"category": "Food"
-					},
-					{
+						"category": "Food",
+						"extraInfoMatch": "",
 						"name": "KYCKLINGKÖTTBULLAR (discount)",
 						"price": "-15.00",
 						"subCategory": "Protein",
-						"bestMatch": {
-							"category": "Protein",
-							"match": "kycklinglar",
-							"score": 58
-						},
-						"category": "Food"
-					}
-				]
-			}
+					},
+				],
+				"transaction_date": "2025-02-22",
+			},
 		]
 	)
 
@@ -689,42 +627,86 @@ Du betjänades av
 Självcheckout Kassör
 Kassa: 26/81 2025-02-09 13:33`
 
-	console.log(
-		parseWillysOcrResult(text)
-	)
-
 	expect(parseWillysOcrResult(text)).toStrictEqual(
 		{
-			transaction_date: '2025-02-09',
-			items: [
-				{name: 'KNÄCKEBRÖD 550G', price: '22.50'},
+			"items": [
 				{
-					name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg',
-					price: '304.44'
+					"extraInfoMatch": "550G",
+					"name": "KNÄCKEBRÖD",
+					"price": "22.50",
 				},
 				{
-					name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg (discount)',
-					price: '-115.88'
+					"extraInfoMatch": "2,360kg+129,00kr/kg",
+					"name": "LAMMFRAMDEL MB",
+					"price": "304.44",
 				},
 				{
-					name: 'LAMMFRAMDEL MB willys Plus: 2,318kg+129,00kr/kg',
-					price: '299.02'
+					"extraInfoMatch": "",
+					"name": "LAMMFRAMDEL MB (discount)",
+					"price": "-115.88",
 				},
 				{
-					name: 'LAMMFRAMDEL MB willys Plus: 2,318kg+129,00kr/kg (discount)',
-					price: '-113.81'
+					"extraInfoMatch": "2,318kg+129,00kr/kg",
+					"name": "LAMMFRAMDEL MB",
+					"price": "299.02",
 				},
-				{name: 'KYCKLINGKÖTTBULLAR', price: '49.90'},
-				{name: 'KYCKLINGKÖTTBULLAR (discount)', price: '-15.00'},
-				{name: 'ÄGG 15P INNE MEDIUM', price: '39.90'},
-				{name: 'ÄGG 15P INNE MEDIUM (discount)', price: '-7.00'},
-				{name: 'LIBANESISKT BRÖD', price: '11.90'},
-				{name: 'SMÖR NORMSALTAT 500G', price: '65.90'},
-				{name: 'SMÖR NORMSALTAT 500G (discount)', price: '-13.00'},
-				{name: 'SCHWEIZERNÖT 150G 3st19,90', price: '59.70'},
-				{name: 'TOMATER BABYPLOMMON', price: '17.90'},
-				{name: 'MANDELSEMLA 2-P', price: '29.90'}
-			]
+				{
+					"extraInfoMatch": "",
+					"name": "LAMMFRAMDEL MB (discount)",
+					"price": "-113.81",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "KYCKLINGKÖTTBULLAR",
+					"price": "49.90",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "KYCKLINGKÖTTBULLAR (discount)",
+					"price": "-15.00",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "ÄGG 15P INNE MEDIUM",
+					"price": "39.90",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "ÄGG 15P INNE MEDIUM (discount)",
+					"price": "-7.00",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "LIBANESISKT BRÖD",
+					"price": "11.90",
+				},
+				{
+					"extraInfoMatch": "500G",
+					"name": "SMÖR NORMSALTAT",
+					"price": "65.90",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "SMÖR NORMSALTAT (discount)",
+					"price": "-13.00",
+				},
+				{
+					"extraInfoMatch": "150G 3st19,90",
+					"name": "SCHWEIZERNÖT",
+					"price": "59.70",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "TOMATER BABYPLOMMON",
+					"price": "17.90",
+				},
+				{
+					"extraInfoMatch": "",
+					"name": "MANDELSEMLA 2-P",
+					"price": "29.90",
+				}
+			],
+			"transaction_date": "2025-02-09",
 		}
 	)
 })

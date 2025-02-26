@@ -890,6 +890,8 @@ const fikabread = [
 	"Burek spenat feta"
 ]
 const snacks = [
+	"NÖTMIX",
+	"NÖTMIX SALTY",
 	"CHOKL MANGO&PASSION",
 	"GORGONZOLA",
 	"chips",
@@ -1481,6 +1483,7 @@ const bread = [
 		"category": "Bakery",
 		"sub_category": "Tortillas & Wraps",
 		"items": [
+			"LIBANESISKT BRÖD",
 			"vetetortillas",
 			"vetetortillan",
 			"majstortillas",

@@ -524,9 +524,9 @@ function shadow(obj, prop, value, nonSerializable = false) {
   return value;
 }
 const BaseException = function BaseExceptionClosure() {
-  function BaseException2(message, name) {
+  function BaseException2(message, name2) {
     this.message = message;
-    this.name = name;
+    this.name = name2;
   }
   BaseException2.prototype = new Error();
   BaseException2.constructor = BaseException2;
@@ -1056,37 +1056,37 @@ class StatTimer {
     __publicField(this, "started", /* @__PURE__ */ Object.create(null));
     __publicField(this, "times", []);
   }
-  time(name) {
-    if (name in this.started) {
-      warn(`Timer is already running for ${name}`);
+  time(name2) {
+    if (name2 in this.started) {
+      warn(`Timer is already running for ${name2}`);
     }
-    this.started[name] = Date.now();
+    this.started[name2] = Date.now();
   }
-  timeEnd(name) {
-    if (!(name in this.started)) {
-      warn(`Timer has not been started for ${name}`);
+  timeEnd(name2) {
+    if (!(name2 in this.started)) {
+      warn(`Timer has not been started for ${name2}`);
     }
     this.times.push({
-      name,
-      start: this.started[name],
+      name: name2,
+      start: this.started[name2],
       end: Date.now()
     });
-    delete this.started[name];
+    delete this.started[name2];
   }
   toString() {
     const outBuf = [];
     let longest = 0;
     for (const {
-      name
+      name: name2
     } of this.times) {
-      longest = Math.max(name.length, longest);
+      longest = Math.max(name2.length, longest);
     }
     for (const {
-      name,
+      name: name2,
       start,
       end
     } of this.times) {
-      outBuf.push(`${name.padEnd(longest)} ${end - start}ms
+      outBuf.push(`${name2.padEnd(longest)} ${end - start}ms
 `);
     }
     return outBuf.join("");
@@ -1181,10 +1181,10 @@ function getColorValues(colors) {
   const span = document.createElement("span");
   span.style.visibility = "hidden";
   document.body.append(span);
-  for (const name of colors.keys()) {
-    span.style.color = name;
+  for (const name2 of colors.keys()) {
+    span.style.color = name2;
     const computedColor = window.getComputedStyle(span).color;
-    colors.set(name, getRGB(computedColor));
+    colors.set(name2, getRGB(computedColor));
   }
   span.remove();
 }
@@ -1462,8 +1462,8 @@ addHighlightButton_fn = function() {
   __privateGet(this, _buttons2).append(button);
 };
 function bindEvents(obj, element, names) {
-  for (const name of names) {
-    element.addEventListener(name, obj[name].bind(obj));
+  for (const name2 of names) {
+    element.addEventListener(name2, obj[name2].bind(obj));
   }
 }
 class IdManager {
@@ -1499,11 +1499,11 @@ const _ImageManager = class _ImageManager {
   async getFromFile(file) {
     const {
       lastModified,
-      name,
+      name: name2,
       size,
       type
     } = file;
-    return __privateMethod(this, _ImageManager_instances, get_fn).call(this, `${lastModified}_${name}_${size}_${type}`, file);
+    return __privateMethod(this, _ImageManager_instances, get_fn).call(this, `${lastModified}_${name2}_${size}_${type}`, file);
   }
   async getFromUrl(url) {
     return __privateMethod(this, _ImageManager_instances, get_fn).call(this, url, url);
@@ -1844,17 +1844,17 @@ const _ColorManager = class _ColorManager {
     if (!window.matchMedia("(forced-colors: active)").matches) {
       return rgb;
     }
-    for (const [name, RGB] of this._colors) {
+    for (const [name2, RGB] of this._colors) {
       if (RGB.every((x, i) => x === rgb[i])) {
-        return _ColorManager._colorsMapping.get(name);
+        return _ColorManager._colorsMapping.get(name2);
       }
     }
     return rgb;
   }
-  getHexCode(name) {
-    const rgb = this._colors.get(name);
+  getHexCode(name2) {
+    const rgb = this._colors.get(name2);
     if (!rgb) {
-      return name;
+      return name2;
     }
     return Util.makeHexColor(...rgb);
   }
@@ -2093,18 +2093,18 @@ const _AnnotationEditorUIManager = class _AnnotationEditorUIManager {
       mode
     });
   }
-  setPreference(name, value) {
+  setPreference(name2, value) {
     this._eventBus.dispatch("setpreference", {
       source: this,
-      name,
+      name: name2,
       value
     });
   }
   onSetPreference({
-    name,
+    name: name2,
     value
   }) {
-    switch (name) {
+    switch (name2) {
       case "enableNewAltTextWhenAddingImage":
         __privateSet(this, _enableNewAltTextWhenAddingImage, value);
         break;
@@ -2371,14 +2371,14 @@ const _AnnotationEditorUIManager = class _AnnotationEditorUIManager {
     }
   }
   onEditingAction({
-    name
+    name: name2
   }) {
-    switch (name) {
+    switch (name2) {
       case "undo":
       case "redo":
       case "delete":
       case "selectAll":
-        this[name]();
+        this[name2]();
         break;
       case "highlightSelection":
         this.highlightSelection("context_menu");
@@ -4486,7 +4486,7 @@ const _AnnotationEditor = class _AnnotationEditor {
       const boundResizerBlur = __privateMethod(this, _AnnotationEditor_instances, resizerBlur_fn).bind(this);
       const signal = this._uiManager._signal;
       for (const div of __privateGet(this, _allResizerDivs)) {
-        const name = div.getAttribute("data-resizer-name");
+        const name2 = div.getAttribute("data-resizer-name");
         div.setAttribute("role", "spinbutton");
         div.addEventListener("keydown", boundResizerKeydown, {
           signal
@@ -4494,10 +4494,10 @@ const _AnnotationEditor = class _AnnotationEditor {
         div.addEventListener("blur", boundResizerBlur, {
           signal
         });
-        div.addEventListener("focus", __privateMethod(this, _AnnotationEditor_instances, resizerFocus_fn).bind(this, name), {
+        div.addEventListener("focus", __privateMethod(this, _AnnotationEditor_instances, resizerFocus_fn).bind(this, name2), {
           signal
         });
-        div.setAttribute("data-l10n-id", _AnnotationEditor._l10nResizer[name]);
+        div.setAttribute("data-l10n-id", _AnnotationEditor._l10nResizer[name2]);
       }
     }
     const first = __privateGet(this, _allResizerDivs)[0];
@@ -4522,8 +4522,8 @@ const _AnnotationEditor = class _AnnotationEditor {
       let i = 0;
       for (const child of children) {
         const div = __privateGet(this, _allResizerDivs)[i++];
-        const name = div.getAttribute("data-resizer-name");
-        child.setAttribute("data-l10n-id", _AnnotationEditor._l10nResizer[name]);
+        const name2 = div.getAttribute("data-resizer-name");
+        child.setAttribute("data-l10n-id", _AnnotationEditor._l10nResizer[name2]);
       }
     }
     __privateMethod(this, _AnnotationEditor_instances, setResizerTabIndex_fn).call(this, 0);
@@ -4765,12 +4765,12 @@ createResizers_fn = function() {
   __privateGet(this, _resizersDiv).classList.add("resizers");
   const classes = this._willKeepAspectRatio ? ["topLeft", "topRight", "bottomRight", "bottomLeft"] : ["topLeft", "topMiddle", "topRight", "middleRight", "bottomRight", "bottomMiddle", "bottomLeft", "middleLeft"];
   const signal = this._uiManager._signal;
-  for (const name of classes) {
+  for (const name2 of classes) {
     const div = document.createElement("div");
     __privateGet(this, _resizersDiv).append(div);
-    div.classList.add("resizer", name);
-    div.setAttribute("data-resizer-name", name);
-    div.addEventListener("pointerdown", __privateMethod(this, _AnnotationEditor_instances, resizerPointerdown_fn).bind(this, name), {
+    div.classList.add("resizer", name2);
+    div.setAttribute("data-resizer-name", name2);
+    div.addEventListener("pointerdown", __privateMethod(this, _AnnotationEditor_instances, resizerPointerdown_fn).bind(this, name2), {
       signal
     });
     div.addEventListener("contextmenu", noContextMenu, {
@@ -4780,7 +4780,7 @@ createResizers_fn = function() {
   }
   this.div.prepend(__privateGet(this, _resizersDiv));
 };
-resizerPointerdown_fn = function(name, event) {
+resizerPointerdown_fn = function(name2, event) {
   var _a2;
   event.preventDefault();
   const {
@@ -4796,7 +4796,7 @@ resizerPointerdown_fn = function(name, event) {
   const ac = new AbortController();
   const signal = this._uiManager.combinedSignal(ac);
   this.parent.togglePointerEvents(false);
-  window.addEventListener("pointermove", __privateMethod(this, _AnnotationEditor_instances, resizerPointermove_fn).bind(this, name), {
+  window.addEventListener("pointermove", __privateMethod(this, _AnnotationEditor_instances, resizerPointermove_fn).bind(this, name2), {
     passive: true,
     capture: true,
     signal
@@ -4868,7 +4868,7 @@ addResizeToUndoStack_fn = function() {
     mustExec: true
   });
 };
-resizerPointermove_fn = function(name, event) {
+resizerPointermove_fn = function(name2, event) {
   const [parentWidth, parentHeight] = this.parentDimensions;
   const savedX = this.x;
   const savedY = this.y;
@@ -4884,7 +4884,7 @@ resizerPointermove_fn = function(name, event) {
   let getOpposite;
   let isDiagonal = false;
   let isHorizontal = false;
-  switch (name) {
+  switch (name2) {
     case "topLeft":
       isDiagonal = true;
       getPoint = (w, h) => [0, 0];
@@ -5125,8 +5125,8 @@ resizerBlur_fn = function(event) {
     __privateMethod(this, _AnnotationEditor_instances, stopResizing_fn).call(this);
   }
 };
-resizerFocus_fn = function(name) {
-  __privateSet(this, _focusedResizerName, __privateGet(this, _isResizerEnabledForKeyboard) ? name : "");
+resizerFocus_fn = function(name2) {
+  __privateSet(this, _focusedResizerName, __privateGet(this, _isResizerEnabledForKeyboard) ? name2 : "");
 };
 setResizerTabIndex_fn = function(value) {
   if (!__privateGet(this, _allResizerDivs)) {
@@ -5614,20 +5614,20 @@ class FontLoader {
     canvas.height = 1;
     const ctx = canvas.getContext("2d");
     let called = 0;
-    function isFontReady(name, callback) {
+    function isFontReady(name2, callback) {
       if (++called > 30) {
         warn("Load test font never loaded.");
         callback();
         return;
       }
-      ctx.font = "30px " + name;
+      ctx.font = "30px " + name2;
       ctx.fillText(".", 0, 20);
       const imageData = ctx.getImageData(0, 0, 1, 1);
       if (imageData.data[3] > 0) {
         callback();
         return;
       }
-      setTimeout(isFontReady.bind(null, name, callback));
+      setTimeout(isFontReady.bind(null, name2, callback));
     }
     const loadTestFontId = `lt${Date.now()}${this.loadTestFontId++}`;
     let data = this._loadTestFont;
@@ -5651,10 +5651,10 @@ class FontLoader {
     div.style.width = div.style.height = "10px";
     div.style.position = "absolute";
     div.style.top = div.style.left = "0px";
-    for (const name of [font.loadedName, loadTestFontId]) {
+    for (const name2 of [font.loadedName, loadTestFontId]) {
       const span = this._document.createElement("span");
       span.textContent = "Hi";
-      span.style.fontFamily = name;
+      span.style.fontFamily = name2;
       div.append(span);
     }
     this._document.body.append(div);
@@ -6200,15 +6200,15 @@ class BaseCMapReaderFactory {
     this.isCompressed = isCompressed;
   }
   async fetch({
-    name
+    name: name2
   }) {
     if (!this.baseUrl) {
       throw new Error("Ensure that the `cMapUrl` and `cMapPacked` API parameters are provided.");
     }
-    if (!name) {
+    if (!name2) {
       throw new Error("CMap name must be specified.");
     }
-    const url = this.baseUrl + name + (this.isCompressed ? ".bcmap" : "");
+    const url = this.baseUrl + name2 + (this.isCompressed ? ".bcmap" : "");
     return this._fetch(url).then((cMapData) => ({
       cMapData,
       isCompressed: this.isCompressed
@@ -8385,8 +8385,8 @@ const _CanvasGraphics = class _CanvasGraphics {
     if (fontObj.isType3Font) {
       return;
     }
-    const name = fontObj.loadedName || "sans-serif";
-    const typeface = ((_a2 = fontObj.systemFontInfo) == null ? void 0 : _a2.css) || `"${name}", ${fontObj.fallbackName}`;
+    const name2 = fontObj.loadedName || "sans-serif";
+    const typeface = ((_a2 = fontObj.systemFontInfo) == null ? void 0 : _a2.css) || `"${name2}", ${fontObj.fallbackName}`;
     let bold = "normal";
     if (fontObj.black) {
       bold = "900";
@@ -9371,14 +9371,14 @@ class Metadata {
   getRaw() {
     return __privateGet(this, _data);
   }
-  get(name) {
-    return __privateGet(this, _metadataMap).get(name) ?? null;
+  get(name2) {
+    return __privateGet(this, _metadataMap).get(name2) ?? null;
   }
   getAll() {
     return objectFromMap(__privateGet(this, _metadataMap));
   }
-  has(name) {
-    return __privateGet(this, _metadataMap).has(name);
+  has(name2) {
+    return __privateGet(this, _metadataMap).has(name2);
   }
 }
 _metadataMap = new WeakMap();
@@ -9386,7 +9386,7 @@ _data = new WeakMap();
 const INTERNAL = Symbol("INTERNAL");
 class OptionalContentGroup {
   constructor(renderingIntent, {
-    name,
+    name: name2,
     intent,
     usage,
     rbGroups
@@ -9397,7 +9397,7 @@ class OptionalContentGroup {
     __privateAdd(this, _visible, true);
     __privateSet(this, _isDisplay, !!(renderingIntent & RenderingIntentFlag.DISPLAY));
     __privateSet(this, _isPrint, !!(renderingIntent & RenderingIntentFlag.PRINT));
-    this.name = name;
+    this.name = name2;
     this.intent = intent;
     this.usage = usage;
     this.rbGroups = rbGroups;
@@ -11388,10 +11388,10 @@ class XfaText {
         return;
       }
       let str = null;
-      const name = node.name;
-      if (name === "#text") {
+      const name2 = node.name;
+      if (name2 === "#text") {
         str = node.value;
-      } else if (!XfaText.shouldBuildText(name)) {
+      } else if (!XfaText.shouldBuildText(name2)) {
         return;
       } else if ((_a2 = node == null ? void 0 : node.attributes) == null ? void 0 : _a2.textContent) {
         str = node.attributes.textContent;
@@ -11413,8 +11413,8 @@ class XfaText {
     walk(xfa);
     return output;
   }
-  static shouldBuildText(name) {
-    return !(name === "textarea" || name === "input" || name === "option" || name === "select");
+  static shouldBuildText(name2) {
+    return !(name2 === "textarea" || name2 === "input" || name2 === "option" || name2 === "select");
   }
 }
 const DEFAULT_RANGE_CHUNK_SIZE = 65536;
@@ -12301,7 +12301,7 @@ class LoopbackPort {
       }
     });
   }
-  addEventListener(name, listener, options = null) {
+  addEventListener(name2, listener, options = null) {
     let rmAbort = null;
     if ((options == null ? void 0 : options.signal) instanceof AbortSignal) {
       const {
@@ -12311,13 +12311,13 @@ class LoopbackPort {
         warn("LoopbackPort - cannot use an `aborted` signal.");
         return;
       }
-      const onAbort = () => this.removeEventListener(name, listener);
+      const onAbort = () => this.removeEventListener(name2, listener);
       rmAbort = () => signal.removeEventListener("abort", onAbort);
       signal.addEventListener("abort", onAbort);
     }
     __privateGet(this, _listeners).set(listener, rmAbort);
   }
-  removeEventListener(name, listener) {
+  removeEventListener(name2, listener) {
     const rmAbort = __privateGet(this, _listeners).get(listener);
     rmAbort == null ? void 0 : rmAbort();
     __privateGet(this, _listeners).delete(listener);
@@ -12333,13 +12333,13 @@ _listeners = new WeakMap();
 _deferred = new WeakMap();
 const _PDFWorker = class _PDFWorker {
   constructor({
-    name = null,
+    name: name2 = null,
     port = null,
     verbosity: verbosity2 = getVerbosityLevel()
   } = {}) {
     __privateAdd(this, _PDFWorker_instances);
     var _a2;
-    this.name = name;
+    this.name = name2;
     this.destroyed = false;
     this.verbosity = verbosity2;
     this._readyCapability = Promise.withResolvers();
@@ -13055,11 +13055,11 @@ class WorkerTransport {
     return this.messageHandler.sendWithPromise("GetPermissions", null);
   }
   getMetadata() {
-    const name = "GetMetadata", cachedPromise = __privateGet(this, _methodPromises).get(name);
+    const name2 = "GetMetadata", cachedPromise = __privateGet(this, _methodPromises).get(name2);
     if (cachedPromise) {
       return cachedPromise;
     }
-    const promise = this.messageHandler.sendWithPromise(name, null).then((results) => {
+    const promise = this.messageHandler.sendWithPromise(name2, null).then((results) => {
       var _a2, _b;
       return {
         info: results[0],
@@ -13068,7 +13068,7 @@ class WorkerTransport {
         contentLength: ((_b = this._fullReader) == null ? void 0 : _b.contentLength) ?? null
       };
     });
-    __privateGet(this, _methodPromises).set(name, promise);
+    __privateGet(this, _methodPromises).set(name2, promise);
     return promise;
   }
   getMarkInfo() {
@@ -13107,13 +13107,13 @@ _pagePromises = new WeakMap();
 _pageRefCache = new WeakMap();
 _passwordCapability = new WeakMap();
 _WorkerTransport_instances = new WeakSet();
-cacheSimpleMethod_fn = function(name, data = null) {
-  const cachedPromise = __privateGet(this, _methodPromises).get(name);
+cacheSimpleMethod_fn = function(name2, data = null) {
+  const cachedPromise = __privateGet(this, _methodPromises).get(name2);
   if (cachedPromise) {
     return cachedPromise;
   }
-  const promise = this.messageHandler.sendWithPromise(name, data);
-  __privateGet(this, _methodPromises).set(name, promise);
+  const promise = this.messageHandler.sendWithPromise(name2, data);
+  __privateGet(this, _methodPromises).set(name2, promise);
   return promise;
 };
 const INITIAL_DATA = Symbol("INITIAL_DATA");
@@ -13611,15 +13611,15 @@ class XfaLayer {
         continue;
       }
       const {
-        name
+        name: name2
       } = child;
-      if (name === "#text") {
+      if (name2 === "#text") {
         const node = document.createTextNode(child.value);
         textDivs.push(node);
         html.append(node);
         continue;
       }
-      const childHtml = ((_a2 = child == null ? void 0 : child.attributes) == null ? void 0 : _a2.xmlns) ? document.createElementNS(child.attributes.xmlns, name) : document.createElement(name);
+      const childHtml = ((_a2 = child == null ? void 0 : child.attributes) == null ? void 0 : _a2.xmlns) ? document.createElementNS(child.attributes.xmlns, name2) : document.createElement(name2);
       html.append(childHtml);
       if (child.attributes) {
         this.setAttributes({
@@ -13634,7 +13634,7 @@ class XfaLayer {
         stack.push([child, -1, childHtml]);
       } else if (child.value) {
         const node = document.createTextNode(child.value);
-        if (isNotForRichText && XfaText.shouldBuildText(name)) {
+        if (isNotForRichText && XfaText.shouldBuildText(name2)) {
           textDivs.push(node);
         }
         childHtml.append(node);
@@ -13987,8 +13987,8 @@ const _AnnotationElement = class _AnnotationElement {
   }
   _dispatchEventFromSandbox(actions, jsEvent) {
     const commonActions = this._commonActions;
-    for (const name of Object.keys(jsEvent.detail)) {
-      const action = actions[name] || commonActions[name];
+    for (const name2 of Object.keys(jsEvent.detail)) {
+      const action = actions[name2] || commonActions[name2];
       action == null ? void 0 : action(jsEvent);
     }
   }
@@ -14109,10 +14109,10 @@ const _AnnotationElement = class _AnnotationElement {
   render() {
     unreachable("Abstract method `AnnotationElement.render` called");
   }
-  _getElementsByName(name, skipId = null) {
+  _getElementsByName(name2, skipId = null) {
     const fields = [];
     if (this._fieldObjects) {
-      const fieldObj = this._fieldObjects[name];
+      const fieldObj = this._fieldObjects[name2];
       if (fieldObj) {
         for (const {
           page,
@@ -14140,7 +14140,7 @@ const _AnnotationElement = class _AnnotationElement {
       }
       return fields;
     }
-    for (const domElement of document.getElementsByName(name)) {
+    for (const domElement of document.getElementsByName(name2)) {
       const {
         exportValue
       } = domElement;
@@ -14320,8 +14320,8 @@ class LinkAnnotationElement extends AnnotationElement {
   _bindJSAction(link, data) {
     link.href = this.linkService.getAnchorUrl("");
     const map = /* @__PURE__ */ new Map([["Action", "onclick"], ["Mouse Up", "onmouseup"], ["Mouse Down", "onmousedown"]]);
-    for (const name of Object.keys(data.actions)) {
-      const jsName = map.get(name);
+    for (const name2 of Object.keys(data.actions)) {
+      const jsName = map.get(name2);
       if (!jsName) {
         continue;
       }
@@ -14331,7 +14331,7 @@ class LinkAnnotationElement extends AnnotationElement {
           source: this,
           detail: {
             id: data.id,
-            name
+            name: name2
           }
         });
         return false;
@@ -14965,10 +14965,10 @@ class CheckboxWidgetAnnotationElement extends WidgetAnnotationElement {
     element.tabIndex = DEFAULT_TAB_INDEX;
     element.addEventListener("change", (event) => {
       const {
-        name,
+        name: name2,
         checked
       } = event.target;
-      for (const checkbox of this._getElementsByName(name, id)) {
+      for (const checkbox of this._getElementsByName(name2, id)) {
         const curChecked = checked && checkbox.exportValue === data.exportValue;
         if (checkbox.domElement) {
           checkbox.domElement.checked = curChecked;
@@ -15045,10 +15045,10 @@ class RadioButtonWidgetAnnotationElement extends WidgetAnnotationElement {
     element.tabIndex = DEFAULT_TAB_INDEX;
     element.addEventListener("change", (event) => {
       const {
-        name,
+        name: name2,
         checked
       } = event.target;
-      for (const radio of this._getElementsByName(name, id)) {
+      for (const radio of this._getElementsByName(name2, id)) {
         storage.setValue(radio.id, {
           value: false
         });
@@ -15165,15 +15165,15 @@ class ChoiceWidgetAnnotationElement extends WidgetAnnotationElement {
       selectElement.addEventListener("input", removeEmptyEntry);
     }
     const getValue = (isExport) => {
-      const name = isExport ? "value" : "textContent";
+      const name2 = isExport ? "value" : "textContent";
       const {
         options,
         multiple
       } = selectElement;
       if (!multiple) {
-        return options.selectedIndex === -1 ? null : options[options.selectedIndex][name];
+        return options.selectedIndex === -1 ? null : options[options.selectedIndex][name2];
       }
-      return Array.prototype.filter.call(options, (option) => option.selected).map((option) => option[name]);
+      return Array.prototype.filter.call(options, (option) => option.selected).map((option) => option[name2]);
     };
     let selectedValues = getValue(false);
     const getItems = (event) => {
@@ -17845,13 +17845,13 @@ getDropdownRoot_fn = function() {
   div.setAttribute("aria-multiselectable", false);
   div.setAttribute("aria-orientation", "vertical");
   div.setAttribute("data-l10n-id", "pdfjs-editor-colorpicker-dropdown");
-  for (const [name, color] of __privateGet(this, _uiManager2).highlightColors) {
+  for (const [name2, color] of __privateGet(this, _uiManager2).highlightColors) {
     const button = document.createElement("button");
     button.tabIndex = "0";
     button.role = "option";
     button.setAttribute("data-color", color);
-    button.title = name;
-    button.setAttribute("data-l10n-id", __privateGet(_ColorPicker, _l10nColor)[name]);
+    button.title = name2;
+    button.setAttribute("data-l10n-id", __privateGet(_ColorPicker, _l10nColor)[name2]);
     const swatch = document.createElement("span");
     button.append(swatch);
     swatch.className = "swatch";
@@ -18771,20 +18771,20 @@ class DrawingOptions {
   constructor() {
     __privateAdd(this, _svgProperties, /* @__PURE__ */ Object.create(null));
   }
-  updateProperty(name, value) {
-    this[name] = value;
-    this.updateSVGProperty(name, value);
+  updateProperty(name2, value) {
+    this[name2] = value;
+    this.updateSVGProperty(name2, value);
   }
   updateProperties(properties) {
     if (!properties) {
       return;
     }
-    for (const [name, value] of Object.entries(properties)) {
-      this.updateProperty(name, value);
+    for (const [name2, value] of Object.entries(properties)) {
+      this.updateProperty(name2, value);
     }
   }
-  updateSVGProperty(name, value) {
-    __privateGet(this, _svgProperties)[name] = value;
+  updateSVGProperty(name2, value) {
+    __privateGet(this, _svgProperties)[name2] = value;
   }
   toSVGProperties() {
     const root = __privateGet(this, _svgProperties);
@@ -18859,8 +18859,8 @@ const _DrawingEditor = class _DrawingEditor extends AnnotationEditor {
   static get defaultPropertiesToUpdate() {
     const properties = [];
     const options = this._defaultDrawingOptions;
-    for (const [type, name] of this.typesMap) {
-      properties.push([type, options[name]]);
+    for (const [type, name2] of this.typesMap) {
+      properties.push([type, options[name2]]);
     }
     return properties;
   }
@@ -18869,18 +18869,18 @@ const _DrawingEditor = class _DrawingEditor extends AnnotationEditor {
     const {
       _drawingOptions
     } = this;
-    for (const [type, name] of this.constructor.typesMap) {
-      properties.push([type, _drawingOptions[name]]);
+    for (const [type, name2] of this.constructor.typesMap) {
+      properties.push([type, _drawingOptions[name2]]);
     }
     return properties;
   }
-  _updateProperty(type, name, value) {
+  _updateProperty(type, name2, value) {
     const options = this._drawingOptions;
-    const savedValue = options[name];
+    const savedValue = options[name2];
     const setter = (val) => {
       var _a2;
-      options.updateProperty(name, val);
-      const bbox = __privateGet(this, _drawOutlines).updateProperty(name, val);
+      options.updateProperty(name2, val);
+      const bbox = __privateGet(this, _drawOutlines).updateProperty(name2, val);
       if (bbox) {
         __privateMethod(this, _DrawingEditor_instances, updateBbox_fn).call(this, bbox);
       }
@@ -19441,8 +19441,8 @@ class InkDrawOutliner {
     }]);
     __privateGet(this, _last2).set(line, 0);
   }
-  updateProperty(name, value) {
-    if (name === "stroke-width") {
+  updateProperty(name2, value) {
+    if (name2 === "stroke-width") {
       __privateSet(this, _thickness3, value);
     }
   }
@@ -19828,8 +19828,8 @@ const _InkDrawOutline = class _InkDrawOutline extends Outline {
   get box() {
     return __privateGet(this, _bbox2);
   }
-  updateProperty(name, value) {
-    if (name === "stroke-width") {
+  updateProperty(name2, value) {
+    if (name2 === "stroke-width") {
       return __privateMethod(this, _InkDrawOutline_instances, updateThickness_fn2).call(this, value);
     }
     return null;
@@ -20109,12 +20109,12 @@ const _InkDrawingOptions = class _InkDrawingOptions extends DrawingOptions {
       "stroke-miterlimit": 10
     });
   }
-  updateSVGProperty(name, value) {
-    if (name === "stroke-width") {
+  updateSVGProperty(name2, value) {
+    if (name2 === "stroke-width") {
       value ?? (value = this["stroke-width"]);
       value *= __privateGet(this, _viewParameters).realScale;
     }
-    super.updateSVGProperty(name, value);
+    super.updateSVGProperty(name2, value);
   }
   clone() {
     const clone = new _InkDrawingOptions(__privateGet(this, _viewParameters));
@@ -24228,9 +24228,9 @@ function requireRuntime() {
           this.arg = undefined$1;
           this.tryEntries.forEach(resetTryEntry);
           if (!skipTempReset) {
-            for (var name in this) {
-              if (name.charAt(0) === "t" && hasOwn.call(this, name) && !isNaN(+name.slice(1))) {
-                this[name] = undefined$1;
+            for (var name2 in this) {
+              if (name2.charAt(0) === "t" && hasOwn.call(this, name2) && !isNaN(+name2.slice(1))) {
+                this[name2] = undefined$1;
               }
             }
           }
@@ -25977,6 +25977,8 @@ const fikabread = [
   "Burek spenat feta"
 ];
 const snacks = [
+  "NÖTMIX",
+  "NÖTMIX SALTY",
   "CHOKL MANGO&PASSION",
   "GORGONZOLA",
   "chips",
@@ -26566,6 +26568,7 @@ const bread = [
     "category": "Bakery",
     "sub_category": "Tortillas & Wraps",
     "items": [
+      "LIBANESISKT BRÖD",
       "vetetortillas",
       "vetetortillan",
       "majstortillas",
@@ -34345,23 +34348,24 @@ function normalize(text) {
 function preprocess(text) {
   return normalize(text);
 }
-function addSubCategory(item) {
+function addSubCategory(item, debug = false) {
+  let debugMatches = [];
+  const options = { scorer: Ye };
   const processedItem = preprocess(item.name);
   let bestMatch = { category: "", score: 0 };
-  const options = { scorer: Ye };
   for (const [category, choices] of Object.entries(preprocessedCategories)) {
-    processedItem.split(" ").forEach((word) => {
-      const results2 = or(word, choices, options);
-      results2.sort((a, b) => b[1] - a[1]);
-      if (results2[0][1] > bestMatch.score) {
-        bestMatch = { category, match: results2[0][0], score: results2[0][1] };
-      }
-    });
     const results = or(processedItem, choices, options);
     results.sort((a, b) => b[1] - a[1]);
     if (results[0][1] > bestMatch.score) {
       bestMatch = { category, match: results[0][0], score: results[0][1] };
     }
+    if (debug) {
+      debugMatches.push({ category, match: results[0][0], score: results[0][1] });
+    }
+  }
+  if (debug) {
+    debugMatches = debugMatches.sort((a, b) => b.score - a.score).slice(0, 5);
+    return { ...item, subCategory: bestMatch.category, bestMatch, debugMatches };
   }
   return { ...item, subCategory: bestMatch.category, bestMatch };
 }
@@ -34391,7 +34395,7 @@ async function convertPriceToIdr(price) {
   const exchangeRate = await getExchangeRate();
   return price * exchangeRate;
 }
-function inferCategoryFromName(name) {
+function inferCategoryFromName(name2) {
   return "Food";
 }
 function enrichItems(results) {
@@ -34540,8 +34544,8 @@ function parseLidlOcrResult(text) {
         items.push(currentItem);
       }
       const price = parseFloat(priceMatch[1].replace(",", "."));
-      const name = line.substring(0, line.indexOf(priceMatch[1])).trim();
-      currentItem = { name, price, extraInfo: "" };
+      const name2 = line.substring(0, line.indexOf(priceMatch[1])).trim();
+      currentItem = { name: name2, price, extraInfo: "" };
       let j = i + 1;
       while (j < lines.length) {
         const nextLine = lines[j].trim();
@@ -34607,13 +34611,22 @@ function parseWillysOcrResult(ocrText) {
     if (priceRegex.test(line)) {
       const priceMatch = line.match(priceRegex);
       const price = parseFloat(priceMatch[0].replace(",", "."));
-      let name = "";
+      name = (currentItem.trim() + " " + line.substring(0, line.indexOf(priceMatch[0])).trim()).trim();
+      name = name.replace("willys Plus:", "");
+      const extraInfoMatch = Array.from(name.matchAll(/(\b(?=\S*(kg|st|G|L))(?=\S*\d)\S+\b)/g));
+      for (const match of extraInfoMatch) {
+        name = name.replace(match[0], "").trim();
+      }
+      const extraInfo = extraInfoMatch.reduce(
+        (acc, curr) => {
+          return acc + " " + curr[0];
+        },
+        ""
+      ).trim();
       if (price < 0) {
         name = items[items.length - 1].name + " (discount)";
-      } else {
-        name = (currentItem.trim() + " " + line.substring(0, line.indexOf(priceMatch[0])).trim()).trim();
       }
-      items.push({ name, price });
+      items.push({ name, price, extraInfoMatch: extraInfoMatch ? extraInfo : "" });
       currentItem = "";
     } else {
       currentItem += " " + line;
@@ -34628,7 +34641,7 @@ function parseWillysOcrResult(ocrText) {
     transactionDate = "Unknown";
   }
   items = items.map((item) => {
-    return { name: item.name, price: item.price.toFixed(2) };
+    return { ...item, price: item.price.toFixed(2) };
   });
   return {
     transaction_date: transactionDate,

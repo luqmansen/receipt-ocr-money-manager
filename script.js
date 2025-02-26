@@ -8,7 +8,7 @@ const stem = Snowball('swedish');
 
 
 // Create a preprocessed category map
-const preprocessedCategories = {};
+export const preprocessedCategories = {};
 for (const [category, terms] of Object.entries(categories)) {
 	try {
 		preprocessedCategories[category] = terms.map(term => {
@@ -38,27 +38,29 @@ function preprocess(text) {
 	return normalize(text);
 }
 
-export function addSubCategory(item) {
+export function addSubCategory(item, debug = false) {
+
+	let debugMatches = [];
+
+	const options = {scorer: fuzz.token_set_ratio};
 	const processedItem = preprocess(item.name);
 	let bestMatch = {category: '', score: 0};
-	const options = {scorer: fuzz.token_set_ratio};
 	for (const [category, choices] of Object.entries(preprocessedCategories)) {
-
-		// the product name lot of times contains multiple words, and we want to find the best match for each word
-		processedItem.split(' ').forEach(word => {
-			const results = fuzz.extract(word, choices, options)
-			results.sort((a, b) => b[1] - a[1]);
-			if (results[0][1] > bestMatch.score) {
-				bestMatch = {category, match: results[0][0], score: results[0][1]};
-			}
-		});
-		// try the whole product name as well
-		const results = fuzz.extract(processedItem, choices, options)
+		const results = fuzz.extract(processedItem, choices, options);
 		results.sort((a, b) => b[1] - a[1]);
+
 		if (results[0][1] > bestMatch.score) {
 			bestMatch = {category, match: results[0][0], score: results[0][1]};
 		}
+		if (debug) {
+			debugMatches.push({category, match: results[0][0], score: results[0][1]});
+		}
 
+	}
+
+	if (debug) {
+		debugMatches = debugMatches.sort((a, b) => b.score - a.score).slice(0, 5);
+		return {...item, subCategory: bestMatch.category, bestMatch, debugMatches};
 	}
 
 	return {...item, subCategory: bestMatch.category, bestMatch};
@@ -389,15 +391,31 @@ export function parseWillysOcrResult(ocrText) {
 			const priceMatch = line.match(priceRegex);
 			const price = parseFloat(priceMatch[0].replace(',', '.'));
 
-			let name = '';
+			name = (currentItem.trim() + ' ' + line.substring(0, line.indexOf(priceMatch[0])).trim()).trim();
+
+
+			// name sanitization
+			// remove `willys Plus:` from the name
+			name = name.replace('willys Plus:', '');
+			//match one or more word that contains (kg, st, G,L ) AND digits
+			const extraInfoMatch = Array.from(name.matchAll(/(\b(?=\S*(kg|st|G|L))(?=\S*\d)\S+\b)/g));
+
+
+			for (const match of extraInfoMatch) {
+				name = name.replace(match[0], '').trim();
+			}
+			const extraInfo = extraInfoMatch.reduce(
+				(acc, curr) => {
+					return acc + ' ' + curr[0];
+				}, '').trim();
+
+
 			if (price < 0) {
 				// Discount item, use previous item name
 				name = items[items.length - 1].name + ' (discount)';
-			} else {
-				name = (currentItem.trim() + ' ' + line.substring(0, line.indexOf(priceMatch[0])).trim()).trim();
 			}
 
-			items.push({name, price});
+			items.push({name, price, extraInfoMatch: extraInfoMatch ? extraInfo : ''});
 			currentItem = '';
 		} else {
 			currentItem += ' ' + line;
@@ -415,7 +433,7 @@ export function parseWillysOcrResult(ocrText) {
 
 	// Normalize all prices to 2 decimal places
 	items = items.map(item => {
-		return {name: item.name, price: item.price.toFixed(2)};
+		return {...item, price: item.price.toFixed(2)};
 	});
 
 	return {
