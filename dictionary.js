@@ -53,7 +53,7 @@ snacks.push(...merge(cheese))
 const staples = [{
     "category": "Pantry Staples",
     "sub_category": "Grains & Pasta",
-    "items": ["ris", "risset", "quinoa", "quinoan", "pasta", "pastan", "couscous", "couscousen", "bulgur", "bulguren", "fullkornsris", "fullkornsrisset", "basmatiris", "basmatirisset", "nudlar", "nudlarna", "soba", "soban", "ramen", "ramenen", "gnocchi", "gnocchin", "polenta", "polentan", "tapioka", "tapiokan", "bönpasta", "bönpastan"]
+    "items": ["ris", "risset", "quinoa", "quinoan", "pasta", "pastan", "couscous", "couscousen", "bulgur", "bulguren", "fullkornsris", "fullkornsrisset", "basmatiris", "basmatirisset", "nudlar", "nudlarna", "soba", "soban", "ramen", "ramenen", "gnocchi", "gnocchin", "polenta", "polentan", "tapioka", "tapiokan", "bönpasta", "bönpastan", "Spaghetti",   "Fettuccine",   "Penne",   "Macaroni",   "Linguine",   "Rigatoni",   "Farfalle",   "Rotini",   "Orzo",   "Cavatappi",   "Tagliatelle",   "Lasagna",   "Bucatini",   "Ziti",   "Orecchiette",   "Tortellini",   "Ravioli",   "Gnocchi",   "Pappardelle",   "Capellini",   "Cannelloni",   "Conchiglie",   "Gemelli",   "Fusilli",   "Anellini",   "Ditalini",   "Mafaldine",   "Paccheri",   "Strozzapreti",   "Casarecce",   "Cavatelli",   "Bigoli",   "Gigli",   "Radiatori",   "Trofie",   "Fregola",   "Acini di Pepe"]
 }, {
     "category": "Pantry Staples",
     "sub_category": "Canned & Jarred Goods",
