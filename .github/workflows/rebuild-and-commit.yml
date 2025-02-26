@@ -25,9 +25,7 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Commit and push changes
-        uses: ad-m/github-push-action@v0.6.0
+      - name: Commit & Push changes
+        uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
-          force: true
