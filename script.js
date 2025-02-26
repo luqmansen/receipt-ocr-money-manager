@@ -119,7 +119,7 @@ export async function outputMoneyManagerFormat(results) {
 
     for (const data of results) {
         const {transaction_date, items} = data;
-        const formattedDate = transaction_date.toISOString().split('T')[0].split('-').reverse().join('/');
+        const formattedDate = transaction_date.toLocaleDateString('en-GB').split('/').reverse().join('/');
         const output = await Promise.all(items.map(async item => {
             const idrAmount = (await convertPriceToIdr(item.price)).toFixed(2);
             const dump = JSON.stringify(item.bestMatch);
@@ -320,7 +320,7 @@ export function parseLidlOcrResult(text) {
 
     const dateString = match[0];
     // Note: JavaScript interprets date strings in UTC by default
-    const date = new Date(dateString + ' GMT+0100');
+    const date = new Date(dateString + 'T00:00:00');
     return {
         transaction_date: date, items: items
     };
@@ -364,7 +364,7 @@ export function parseWillysOcrResult(ocrText) {
     }
     const dateMatch = lines[lines.length - 1].match(dateRegex);
     if (dateMatch) {
-        transactionDate = new Date(dateMatch[1] + ' GMT+0100');
+        transactionDate = new Date(dateMatch[1] + 'T00:00:00');
     } else {
         log('Date not found in the OCR text');
     }
