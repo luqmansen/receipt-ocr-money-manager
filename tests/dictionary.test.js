@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest'
-import {merge} from './dictionary.js'
+import {merge} from '../dictionary.js'
 
 
 test('merge', () => {

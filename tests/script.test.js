@@ -1,5 +1,5 @@
 import {expect, test} from 'vitest'
-import {addSubCategory, enrichItems, outputMoneyManagerFormat, parseWillysOcrResult} from "./script";
+import {addSubCategory, enrichItems, outputMoneyManagerFormat, parseWillysOcrResult} from "../script";
 
 test('addSubCategory', () => {
     expect(addSubCategory(
@@ -152,7 +152,7 @@ Kassa: 28/64 2025-02-22 13:30
 
     expect(enrichItems([parseWillysOcrResult(text)])).toStrictEqual(
         [{
-            "transaction_date": new Date("2025-02-22T12:30:00.000Z"),
+            "transaction_date": "2025-02-22", // locale sv-SE string format
             "items": [
                 {
                     "name": "KYCKLING FILÉ",
@@ -163,7 +163,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "kyckling",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "CHOKL MANGO&PASSION",
@@ -174,7 +174,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "mango",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "OLIVOLJA",
@@ -185,7 +185,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "olivolja",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "NÖTMIX SALTY 200G",
@@ -196,7 +196,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "notskalsost",
                         "score": 50
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "LIBANESISKT BRÖD",
@@ -207,7 +207,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "brod",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "RÖDA LINSER EKO",
@@ -218,7 +218,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "linser",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "POTATIS SÖT",
@@ -229,18 +229,18 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "potatis",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "STANDMJÖLK ESL 1,5L",
                     "price": "19.50",
-                    "subCategory": "Food Supplies",
+                    "subCategory": "Beverages",
                     "bestMatch": {
-                        "category": "Food Supplies",
-                        "match": "mandelmjolk",
-                        "score": 53
+                        "category": "Beverages",
+                        "match": "standardmjolk",
+                        "score": 63
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "SALLADSOST 2st17,90",
@@ -251,7 +251,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "hushallsost",
                         "score": 53
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "SALLADSOST 2st17,90 (discount)",
@@ -262,7 +262,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "hushallsost",
                         "score": 46
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "KANELSNÄCKA 4st9,90",
@@ -273,7 +273,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "kanelsnacka",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "KANELSNÄCKA 4st9,90 (discount)",
@@ -284,7 +284,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "kanelsnacka",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "SURKÅL EKO",
@@ -295,7 +295,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "surkal",
                         "score": 100
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "KYCKLINGKÖTTBULLAR",
@@ -306,7 +306,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "kycklinglar",
                         "score": 76
                     },
-                    "category": "food"
+                    "category": "Food"
                 },
                 {
                     "name": "KYCKLINGKÖTTBULLAR (discount)",
@@ -317,7 +317,7 @@ Kassa: 28/64 2025-02-22 13:30
                         "match": "kycklinglar",
                         "score": 58
                     },
-                    "category": "food"
+                    "category": "Food"
                 }
             ]
         }]
@@ -328,7 +328,7 @@ Kassa: 28/64 2025-02-22 13:30
 test('outputMoneyManagerFormat', async () => {
     const items = [
         {
-            "transaction_date": new Date("2025-02-14T14:11:00.000Z"),
+            "transaction_date": new Date("2025-02-14T14:11:00.000Z").toLocaleDateString('sv-SE'),
             "items": [
                 {
                     "name": "SHOT INGEF/GURKM",

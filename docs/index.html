@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Multi-PDF OCR and Data Structuring Demo</title>
 
     <style>
@@ -22,9 +22,9 @@
             overflow-y: auto;
         }
 
-         #structured-data {
-             max-height: 1000px;
-         }
+        #structured-data {
+            max-height: 1000px;
+        }
 
         #log {
             background-color: #f0f0f0;
@@ -52,12 +52,12 @@
             overflow-y: auto;
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-CQd2XM-a.js"></script>
+  <script type="module" crossorigin src="./assets/index-yeVG-X90.js"></script>
 </head>
 <body>
 <h1>Receipt OCR to Money Manager</h1>
 <form id="upload-form">
-    <input type="file" id="file-input" accept=".pdf, image/jpeg, image/png" multiple required>
+    <input accept=".pdf, image/jpeg, image/png" id="file-input" multiple required type="file">
     <button type="submit">Process Files</button>
 </form>
 <h2>Log:</h2>
@@ -71,5 +71,11 @@
 <h2>TSV format:</h2>
 <div id="tsv-data"></div>
 <button id="download-tsv">Download TSV</button>
+
+<p>
+    2d42d93<br>
+    2025-02-26 15:31:12<br>
+</p>
 </body>
+
 </html>
