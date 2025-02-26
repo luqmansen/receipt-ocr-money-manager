@@ -2,9 +2,17 @@ import * as fuzz from 'fuzzball';
 import {createScheduler, createWorker} from "tesseract.js";
 import {categories} from './dictionary.js';
 
+// apparently stemming doesn't always yield the best results
+// const stemmer = Snowball('swedish');
+
+
+// Create a preprocessed category map
 const preprocessedCategories = {};
 for (const [category, terms] of Object.entries(categories)) {
     preprocessedCategories[category] = terms.map(term => {
+        // stemmer.setCurrent(normalized);
+        // stemmer.stem();
+        // return stemmer.getCurrent();
         return normalize(term.toLowerCase());
     });
 }
@@ -40,6 +48,7 @@ export async function getExchangeRate() {
     const defaultExchangeRate = 1500;
     const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
+    // Check if the exchange rate is in local storage and still valid
     const cachedRate = localStorage.getItem(localStorageKey);
     if (cachedRate) {
         const {rate, timestamp} = JSON.parse(cachedRate);
@@ -48,11 +57,13 @@ export async function getExchangeRate() {
         }
     }
 
+    // Fetch the exchange rate from the API
     try {
         const response = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2024-03-06/v1/currencies/sek.json');
         const data = await response.json();
         const exchangeRate = data.sek.idr;
 
+        // Store the exchange rate in local storage with a timestamp
         localStorage.setItem(localStorageKey, JSON.stringify({rate: exchangeRate, timestamp: Date.now()}));
         return exchangeRate;
     } catch (error) {
@@ -67,6 +78,8 @@ async function convertPriceToIdr(price) {
 }
 
 function inferCategoryFromName(name) {
+    // (later) implement a real category inference
+    // most of the items are likely food for now.
     return 'Food';
 }
 
@@ -83,6 +96,25 @@ export function enrichItems(results) {
 }
 
 export async function outputMoneyManagerFormat(results) {
+    /*
+    Money manager backup format consist of tsv format with the following columns:
+
+    ```
+    Date|Account|Category|Subcategory|Note|Amount|Income/Expense|Description|AmountSub|Currency
+    ```
+
+    - Date is in the format of dd/mm/yyyy
+    - Account is always `Cash`
+    - Category is inferred from the item name
+    - Subcategory is also inferred from the item name
+    - Note is the item name
+    - Amount is converted to my main account currency, which is IDR
+    - Income/Expense is always `Expense`
+    - Description is the item name
+    - AmountSub is the price of the item in SEK
+    - Currency is hardcoded to SEK for now
+    */
+
     let final_data = []
 
     for (const data of results) {
@@ -245,12 +277,14 @@ export function parseLidlOcrResult(text) {
             const name = line.substring(0, line.indexOf(priceMatch[1])).trim();
             currentItem = {name, price, extraInfo: ''};
 
+            // Look for discounts or extra info in the next lines
             let j = i + 1;
             while (j < lines.length) {
                 const nextLine = lines[j].trim();
                 const discountMatch = nextLine.match(/-(\d+[.,]\d+)/);
 
                 if (discountMatch) {
+                    // Add the discount as a separate item so we can track how much we saved
                     items.push({
                         name: currentItem.name + ' (discount)',
                         price: -parseFloat(discountMatch[1].replace(',', '.'))
@@ -258,15 +292,17 @@ export function parseLidlOcrResult(text) {
                 } else if (nextLine.includes('SEK/kg')) {
                     currentItem.extraInfo = nextLine;
                 } else if (nextLine.match(/(\d+[.,]\d+)\s*C$/)) {
+                    // Next item found, break the inner loop
                     break;
                 }
                 j++;
             }
-            i = j - 1;
+            i = j - 1; // Set the outer loop to continue from where we left off
         }
         i++;
     }
 
+    // Add the last item if exists
     if (currentItem) {
         items.push(currentItem);
     }
@@ -277,11 +313,13 @@ export function parseLidlOcrResult(text) {
         log('Date not found in the OCR text');
     }
 
+    // normalize all prices to 2 decimal places
     items = items.map(item => {
         return {name: item.name, price: item.price.toFixed(2)};
     });
 
     const dateString = match[0];
+    // Note: JavaScript interprets date strings in UTC by default
     const date = new Date(dateString + ' GMT+0100');
     return {
         transaction_date: date, items: items
@@ -293,8 +331,8 @@ export function parseWillysOcrResult(ocrText) {
     let transactionDate = '';
 
     const lines = ocrText.trim().split('\n');
-    const itemRegex = /^(.+)\s(\d+,\d{2})$/;
-    const discountRegex = /-\d+,\d+/;
+    const itemRegex = /^(.+)\s(\d+,\d{2})$/; // item name and non-negative price
+    const discountRegex = /-\d+,\d+/; //negative price
     const dateRegex = /(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2})$/;
     const endOfItemsRegex = /^Totalt.*/;
 
@@ -314,11 +352,12 @@ export function parseWillysOcrResult(ocrText) {
                 name: itemMatch[1].trim(), price: parseFloat(itemMatch[2].replace(',', '.'))
             });
         } else if (discountMatch) {
+            // Add the discount as a separate item so we can track how much we saved
             const previousItem = items[items.length - 1];
             items.push(
                 {
                     name: previousItem.name + ' (discount)',
-                    price: parseFloat(discountMatch[0].replace(',', '.'))
+                    price: parseFloat(discountMatch[0].replace(',', '.')) // this is already negative
                 }
             )
         }
@@ -330,6 +369,7 @@ export function parseWillysOcrResult(ocrText) {
         log('Date not found in the OCR text');
     }
 
+    // validate the total price
     const totalPriceRegex = /Totalt ([\d,]+) SEK/
     log('Checking total price');
     const amountMatch = ocrText.match(totalPriceRegex);
@@ -339,10 +379,11 @@ export function parseWillysOcrResult(ocrText) {
     if (totalAmount) {
         const calculatedTotal = items.reduce((acc, item) => acc + item.price, 0);
         if (calculatedTotal.toFixed(2) !== parseFloat(totalAmount.replace(',', '.')).toFixed(2)) {
-            log(`Total amount mismatch: expected ${totalAmount, got ${calculatedTotal.toFixed(2)}`);
+            log(`Total amount mismatch: expected ${totalAmount}, got ${calculatedTotal.toFixed(2)}`);
         }
     }
 
+    // normalize all prices to 2 decimal places
     items = items.map(item => {
         return {name: item.name, price: item.price.toFixed(2)};
     });
