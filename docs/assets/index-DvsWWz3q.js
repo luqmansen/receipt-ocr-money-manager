@@ -25919,11 +25919,63 @@ const cheese = [
     ]
   }
 ];
+const fikabread = [
+  "Kanelbullebröd",
+  "Kardemummabröd",
+  "Saffransbröd",
+  "Vetebullar",
+  "Mördegskaka",
+  "Lussekattbröd",
+  "Skogaholmslimpa",
+  "Fikonbröd",
+  "Hallonmazariner",
+  "Mandelmassa Bröd",
+  "Rågbröd med Sirap",
+  "Kärleksmums Bröd",
+  "Chokladboll Bröd",
+  "Pistagebullar",
+  "Blåbärsbröd",
+  "Kokosbröd",
+  "Pepparkaksbröd",
+  "Vaniljdrömmar Bröd",
+  "Apelsinmarmor Bröd",
+  "Kaffebröd",
+  "Nötbröd",
+  "Fänkålsbröd",
+  "Ingefäras Bröd",
+  "Rosmarinbröd",
+  "Sesamfrö Bröd",
+  "Havreflarn Bröd",
+  "Mjölkchoklad Bröd",
+  "Krusbärsbröd",
+  "Rabarberpaj Bröd",
+  "Smörgåsbröd med Dill",
+  "Äppelkaka Bröd",
+  "Pärons Bröd",
+  "Honungsbröd",
+  "Körsbärsbröd",
+  "Citronmåne Bröd",
+  "Chokladmuffins Bröd",
+  "Kärnfamilj Bröd",
+  "Glöggbröd",
+  "Julbröd med Russin",
+  "Vårbröd med Jordgubb",
+  "Sommarbröd med Rabarber",
+  "Höstbröd med Äpple",
+  "Vinterbröd med Kanel",
+  "Snöflingebröd",
+  "Solskensbröd",
+  "Månskensbröd",
+  "Stjärnbröd",
+  "Vindbröd",
+  "Regnbågsbröd",
+  "MANDELSEMLA",
+  "KANELSNÄCKA",
+  "Burek spenat feta"
+];
 const snacks = [
-  "Burek spenat feta",
   "CHOKL MANGO&PASSION",
   "GORGONZOLA",
-  "KANELSNÄCKA",
   "chips",
   "chipsen",
   "chips",
@@ -26104,6 +26156,7 @@ const snacks = [
   "passionsfruktsorbeten"
 ];
 snacks.push(...merge(cheese));
+snacks.push(...fikabread);
 const staples = [
   {
     "category": "Pantry Staples",
@@ -26787,9 +26840,19 @@ console.assert(
 );
 const preprocessedCategories = {};
 for (const [category, terms] of Object.entries(categories)) {
-  preprocessedCategories[category] = terms.map((term) => {
-    return normalize(term.toLowerCase());
-  });
+  try {
+    preprocessedCategories[category] = terms.map((term) => {
+      try {
+        return normalize(term.toLowerCase());
+      } catch (error) {
+        console.error("Error preprocessing term:", error, term);
+        throw Error("Error preprocessing term: " + term);
+      }
+    });
+  } catch (error) {
+    console.error("Error preprocessing category:", error, category);
+    throw Error("Error preprocessing category: " + category);
+  }
 }
 function normalize(text) {
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -27063,8 +27126,7 @@ function parseWillysOcrResult(ocrText) {
   } else {
     log("Date not found in the OCR text");
   }
-  const totalPriceRegex = /Totalt ([\d,]+) SEK/;
-  log("Checking total price");
+  const totalPriceRegex = /Totalt.* (\d+,\d{2}) SEK/;
   const amountMatch = ocrText.match(totalPriceRegex);
   const totalAmount = amountMatch ? amountMatch[1] : null;
   log(`Total amount: ${totalAmount}`);
@@ -27082,8 +27144,8 @@ function parseWillysOcrResult(ocrText) {
     items
   };
 }
-function structureData(ocrText) {
-  const willysRegex = /Willys/;
+function parseOCR(ocrText) {
+  const willysRegex = /willys/;
   const lidlRegex = /lidl.se/;
   if (ocrText.match(willysRegex)) {
     return parseWillysOcrResult(ocrText);
@@ -27120,7 +27182,7 @@ form.addEventListener("submit", async (e) => {
   });
   const ocrResults = await Promise.all(futures);
   for (const ocr of ocrResults) {
-    const structuredData = structureData(ocr);
+    const structuredData = parseOCR(ocr);
     json_results.push(structuredData);
   }
   structuredDataDiv.textContent = JSON.stringify(json_results, null, 2);
