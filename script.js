@@ -415,7 +415,7 @@ export function parseWillysOcrResult(ocrText) {
 				name = items[items.length - 1].name + ' (discount)';
 			}
 
-			items.push({name, price, extraInfoMatch: extraInfoMatch ? extraInfo : ''});
+			items.push({name, price, extraInfo: extraInfoMatch ? extraInfo : ''});
 			currentItem = '';
 		} else {
 			currentItem += ' ' + line;

@@ -34626,7 +34626,7 @@ function parseWillysOcrResult(ocrText) {
       if (price < 0) {
         name = items[items.length - 1].name + " (discount)";
       }
-      items.push({ name, price, extraInfoMatch: extraInfoMatch ? extraInfo : "" });
+      items.push({ name, price, extraInfo: extraInfoMatch ? extraInfo : "" });
       currentItem = "";
     } else {
       currentItem += " " + line;
