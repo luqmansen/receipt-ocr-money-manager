@@ -3,7 +3,7 @@ import {createScheduler, createWorker} from "tesseract.js";
 import {categories} from './dictionary.js';
 
 // apparently stemming doesn't always yield the best results
-// const stemmer = Snowball('swedish');
+// const stem = Snowball('swedish');
 
 
 // Create a preprocessed category map
@@ -337,68 +337,79 @@ export function parseLidlOcrResult(text) {
 }
 
 export function parseWillysOcrResult(ocrText) {
+	/*
+	1.Find the line containing `Gäller inte` or `och frysvaror`, as this is usually the header of the receipt,
+	using or in case of the entire string not being read correctly by the OCR.
+	2. Identify the next line as the starting item.
+	3. Identify the first line containing `Totalt` as the end item.
+	4. Extract items between these two anchors, using the number format \d+,\d{2} as anchors for item names.
+	 */
 	let items = [];
 	let transactionDate = '';
 
 	const lines = ocrText.trim().split('\n');
-	const itemRegex = /^(.+)\s(\d+,\d{2})$/; // item name and non-negative price
-	const discountRegex = /-\d+,\d+/; //negative price
-	const dateRegex = /(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2})$/;
-	const endOfItemsRegex = /^Totalt.*/;
+	const itemStartRegex = /Gäller inte|och frysvaror/;
+	const itemEndRegex = /^Totalt/;
+	const priceRegex = /-?\d+,\d{2}$/;
 
+	let startIndex = -1;
+	let endIndex = -1;
+
+	// Find the start and end indices
 	for (let i = 0; i < lines.length; i++) {
-		const line = lines[i];
-
-		const itemMatch = line.match(itemRegex);
-		const discountMatch = line.match(discountRegex);
-		const endOfItemsMatch = line.match(endOfItemsRegex);
-
-		if (endOfItemsMatch) {
+		if (itemStartRegex.test(lines[i])) {
+			startIndex = i + 1;
+		}
+		if (itemEndRegex.test(lines[i])) {
+			endIndex = i;
 			break;
 		}
+	}
 
-		if (itemMatch) {
-			items.push({
-				name: itemMatch[1].trim(), price: parseFloat(itemMatch[2].replace(',', '.'))
-			});
-		} else if (discountMatch) {
-			// Add the discount as a separate item so we can track how much we saved
-			const previousItem = items[items.length - 1];
-			items.push(
-				{
-					name: previousItem.name + ' (discount)',
-					price: parseFloat(discountMatch[0].replace(',', '.')) // this is already negative
-				}
-			)
+	if (startIndex === -1 || endIndex === -1) {
+		return {error: 'Unable to find item start or end'};
+	}
+
+	// Extract items between startIndex and endIndex
+	let currentItem = '';
+	for (let i = startIndex; i < endIndex; i++) {
+		const line = lines[i].trim();
+		if (priceRegex.test(line)) {
+			const priceMatch = line.match(priceRegex);
+			const price = parseFloat(priceMatch[0].replace(',', '.'));
+
+			let name = '';
+			if (price < 0) {
+				// Discount item, use previous item name
+				name = items[items.length - 1].name + ' (discount)';
+			} else {
+				name = (currentItem.trim() + ' ' + line.substring(0, line.indexOf(priceMatch[0])).trim()).trim();
+			}
+
+			items.push({name, price});
+			currentItem = '';
+		} else {
+			currentItem += ' ' + line;
 		}
 	}
+
+	const dateRegex = /\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/;
 	const dateMatch = lines[lines.length - 1].match(dateRegex);
 	if (dateMatch) {
-		transactionDate = (new Date(dateMatch[1])).toLocaleDateString('sv-SE');
+		transactionDate = (new Date(dateMatch[0])).toLocaleDateString('sv-SE');
 	} else {
 		log('Date not found in the OCR text');
+		transactionDate = 'Unknown';
 	}
 
-	// validate the total price
-	const totalPriceRegex = /Totalt.* (\d+,\d{2}) SEK/
-	const amountMatch = ocrText.match(totalPriceRegex);
-	const totalAmount = amountMatch ? amountMatch[1] : null;
-	log(`Total amount: ${totalAmount}`);
-
-	if (totalAmount) {
-		const calculatedTotal = items.reduce((acc, item) => acc + item.price, 0);
-		if (calculatedTotal.toFixed(2) !== parseFloat(totalAmount.replace(',', '.')).toFixed(2)) {
-			log(`Total amount mismatch: expected ${totalAmount}, got ${calculatedTotal.toFixed(2)}`);
-		}
-	}
-
-	// normalize all prices to 2 decimal places
+	// Normalize all prices to 2 decimal places
 	items = items.map(item => {
 		return {name: item.name, price: item.price.toFixed(2)};
 	});
 
 	return {
-		transaction_date: transactionDate, items: items,
+		transaction_date: transactionDate,
+		items: items,
 	};
 }
 

@@ -1,5 +1,11 @@
 import {expect, test} from 'vitest'
-import {addSubCategory, enrichItems, outputMoneyManagerFormat, parseWillysOcrResult, parseOCR} from "../script";
+import {
+	addSubCategory,
+	enrichItems,
+	outputMoneyManagerFormat,
+	parseWillysOcrResult,
+	parseOCR
+} from "../script";
 
 test('addSubCategory', () => {
 	expect(addSubCategory(
@@ -499,6 +505,7 @@ välkommen åter!
 Du betjänades av
 Självcheckout Kassör
 Kassa: 26/81 2025-02-09 13:33`,
+
 		`Fridhemsplan
 Tfn: 08-420 03 380
 Org: 556163-2232
@@ -604,4 +611,93 @@ Kassa: 28/64 2025-02-22 13:30`
 	}
 
 
+})
+
+test('parseWillysOcrResult2', () => {
+	const text = `Fridhemsplan
+Tfn: 08-420 03 380
+Org: 556163-2232
+Öppet köp i 8 dagar med kvitto
+Gäller inte kyl- och frysvaror
+KNÄCKEBRÖD 550G 22,50
+LAMMFRAMDEL MB
+willys Plus:
+2,360kg+129,00kr/kg 304,44
+Rabatt:79,90 KR/KG MAX 3 -115,88
+LAMMFRAMDEL MB
+willys Plus:
+2,318kg+129,00kr/kg 299,02
+Rabatt:79,90 KR/KG MAX 3 -113,81
+KYCKLINGKÖTTBULLAR 49,90
+Rabatt :KÖTTBULLAR -15,00
+ÄGG 15P INNE MEDIUM 39,90
+Rabatt: ÄGG 15P -7,00
+LIBANESISKT BRÖD 11,90
+SMÖR NORMSALTAT 500G 65,90
+Rabatt:SMÖR -13,00
+SCHWEIZERNÖT 150G 3st19,90 59,70
+TOMATER BABYPLOMMON 17,90
+MANDELSEMLA 2-P 29,90
+Totalt 12 varor
+Totalt — 636,37 SEK
+Låga priser på allt. Alltid.
+willys Plus registrerat
+willys Plus-nummer: 9752299071199367
+Mottaget Kontokort 636,37
+Ref:200244297191
+Visa KRRARARRARARTESG
+KÖP 636.37 SEK
+Butik:”=+0777
+Ref: 200244297191 Term: 20024429
+TVR: 0900000000 AID: A0000000031010
+2025-02-09 13:33:44 TSI: 0000
+Kontaktlös KAL 7 001 SWE 393797
+Moms5s Moms Netto Brutto
+12,00 68,19 568,18 636,37
+SPARA KVITTOT
+Öppettider
+Alla dagar 07-22
+välkommen åter!
+Du betjänades av
+Självcheckout Kassör
+Kassa: 26/81 2025-02-09 13:33`
+
+	console.log(
+		parseWillysOcrResult(text)
+	)
+
+	expect(parseWillysOcrResult(text)).toStrictEqual(
+		{
+			transaction_date: '2025-02-09',
+			items: [
+				{name: 'KNÄCKEBRÖD 550G', price: '22.50'},
+				{
+					name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg',
+					price: '304.44'
+				},
+				{
+					name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg (discount)',
+					price: '-115.88'
+				},
+				{
+					name: 'LAMMFRAMDEL MB willys Plus: 2,318kg+129,00kr/kg',
+					price: '299.02'
+				},
+				{
+					name: 'LAMMFRAMDEL MB willys Plus: 2,318kg+129,00kr/kg (discount)',
+					price: '-113.81'
+				},
+				{name: 'KYCKLINGKÖTTBULLAR', price: '49.90'},
+				{name: 'KYCKLINGKÖTTBULLAR (discount)', price: '-15.00'},
+				{name: 'ÄGG 15P INNE MEDIUM', price: '39.90'},
+				{name: 'ÄGG 15P INNE MEDIUM (discount)', price: '-7.00'},
+				{name: 'LIBANESISKT BRÖD', price: '11.90'},
+				{name: 'SMÖR NORMSALTAT 500G', price: '65.90'},
+				{name: 'SMÖR NORMSALTAT 500G (discount)', price: '-13.00'},
+				{name: 'SCHWEIZERNÖT 150G 3st19,90', price: '59.70'},
+				{name: 'TOMATER BABYPLOMMON', price: '17.90'},
+				{name: 'MANDELSEMLA 2-P', price: '29.90'}
+			]
+		}
+	)
 })

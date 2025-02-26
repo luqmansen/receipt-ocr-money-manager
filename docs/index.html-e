@@ -52,7 +52,7 @@
             overflow-y: auto;
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-DvsWWz3q.js"></script>
+  <script type="module" crossorigin src="./assets/index-DTED5gXo.js"></script>
 </head>
 <body>
 <h1>Receipt OCR to Money Manager
@@ -83,7 +83,7 @@
 <button id="download-tsv">Download TSV</button>
 
 <p>
-    64a9ce6<br>
+    a1016d4<br>
     %BUILD_DATE%<br>
 </p>
 </body>
