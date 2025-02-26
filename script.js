@@ -1,9 +1,10 @@
 import * as fuzz from 'fuzzball';
 import {createScheduler, createWorker} from "tesseract.js";
 import {categories} from './dictionary.js';
+import Snowball from "snowball";
 
 // apparently stemming doesn't always yield the best results
-// const stem = Snowball('swedish');
+const stem = Snowball('swedish');
 
 
 // Create a preprocessed category map
@@ -28,7 +29,9 @@ for (const [category, terms] of Object.entries(categories)) {
 }
 
 function normalize(text) {
-	return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	return text.toLowerCase()
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "");
 }
 
 function preprocess(text) {
@@ -40,14 +43,22 @@ export function addSubCategory(item) {
 	let bestMatch = {category: '', score: 0};
 	const options = {scorer: fuzz.token_set_ratio};
 	for (const [category, choices] of Object.entries(preprocessedCategories)) {
+
+		// the product name lot of times contains multiple words, and we want to find the best match for each word
+		processedItem.split(' ').forEach(word => {
+			const results = fuzz.extract(word, choices, options)
+			results.sort((a, b) => b[1] - a[1]);
+			if (results[0][1] > bestMatch.score) {
+				bestMatch = {category, match: results[0][0], score: results[0][1]};
+			}
+		});
+		// try the whole product name as well
 		const results = fuzz.extract(processedItem, choices, options)
-
 		results.sort((a, b) => b[1] - a[1]);
-
-
 		if (results[0][1] > bestMatch.score) {
 			bestMatch = {category, match: results[0][0], score: results[0][1]};
 		}
+
 	}
 
 	return {...item, subCategory: bestMatch.category, bestMatch};

@@ -27,6 +27,33 @@ test('addSubCategory', () => {
 	)
 })
 
+test('addSubCategory2', () => {
+	const a = addSubCategory(
+		{
+			name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg',
+			price: '304.44'
+		})
+
+	console.log(a)
+	// expect(addSubCategory(
+	// 	{
+	// 				name: 'LAMMFRAMDEL MB willys Plus: 2,360kg+129,00kr/kg',
+	// 				price: '304.44'
+	// 			}
+	// )).toStrictEqual(
+	// 	{
+	// 		"bestMatch": {
+	// 			"category": "Meat & Seafood",
+	// 			"match": "kyckling",
+	// 			"score": 100,
+	// 		},
+	// 		"name": "ÖVERLÅR KYCKLING 2st49,90",
+	// 		"price": "99.80",
+	// 		"subCategory": "Poultry",
+	// 	}
+	// )
+})
+
 // test('enrichItems', () => {
 //     let items = [
 //         {

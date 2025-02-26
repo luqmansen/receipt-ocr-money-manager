@@ -52,7 +52,7 @@
             overflow-y: auto;
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-DTED5gXo.js"></script>
+  <script type="module" crossorigin src="./assets/index-D7FHx4Kk.js"></script>
 </head>
 <body>
 <h1>Receipt OCR to Money Manager
@@ -83,7 +83,7 @@
 <button id="download-tsv">Download TSV</button>
 
 <p>
-    d1d7bb7 (fix willys parsing)<br>
+    9c50f3c (Merge remote-tracking branch 'origin/master')<br>
     %BUILD_DATE%<br>
 </p>
 </body>
