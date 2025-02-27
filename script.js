@@ -82,7 +82,7 @@ export async function getExchangeRate() {
 
 	// Fetch the exchange rate from the API
 	try {
-		const response = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@2024-03-06/v1/currencies/sek.json');
+		const response = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/sek.json');
 		const data = await response.json();
 		const exchangeRate = data.sek.idr;
 
