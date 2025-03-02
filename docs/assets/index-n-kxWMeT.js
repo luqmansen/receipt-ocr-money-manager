@@ -26808,6 +26808,7 @@ const beveragesSource = [
     "category": "Beverages",
     "sub_category": "Other Beverages",
     "items": [
+      "MELLANMJÖLK",
       "pant",
       "pantburk",
       "smoothie",
@@ -34590,12 +34591,16 @@ function parseWillysOcrResult(ocrText) {
   let items = [];
   let transactionDate = "";
   const lines = ocrText.trim().split("\n");
+  const headerRegex = /556163-2232/;
   const itemStartRegex = /Gäller inte|och frysvaror/;
   const itemEndRegex = /^Totalt/;
   const priceRegex = /-?\d+,\d{2}$/;
   let startIndex = -1;
   let endIndex = -1;
   for (let i = 0; i < lines.length; i++) {
+    if (headerRegex.test(lines[i])) {
+      startIndex = i + 1;
+    }
     if (itemStartRegex.test(lines[i])) {
       startIndex = i + 1;
     }

@@ -351,7 +351,7 @@ export function parseLidlOcrResult(text) {
 
 export function parseWillysOcrResult(ocrText) {
 	/*
-	1.Find the line containing `Gäller inte` or `och frysvaror`, as this is usually the header of the receipt,
+	1.Find the line containing `Org: 556163-2232` as this is usually the header of the receipt,
 	using or in case of the entire string not being read correctly by the OCR.
 	2. Identify the next line as the starting item.
 	3. Identify the first line containing `Totalt` as the end item.
@@ -361,6 +361,7 @@ export function parseWillysOcrResult(ocrText) {
 	let transactionDate = '';
 
 	const lines = ocrText.trim().split('\n');
+	const headerRegex = /556163-2232/;
 	const itemStartRegex = /Gäller inte|och frysvaror/;
 	const itemEndRegex = /^Totalt/;
 	const priceRegex = /-?\d+,\d{2}$/;
@@ -370,6 +371,9 @@ export function parseWillysOcrResult(ocrText) {
 
 	// Find the start and end indices
 	for (let i = 0; i < lines.length; i++) {
+		if (headerRegex.test(lines[i])) {
+			startIndex = i + 1;
+		}
 		if (itemStartRegex.test(lines[i])) {
 			startIndex = i + 1;
 		}

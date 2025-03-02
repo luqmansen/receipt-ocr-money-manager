@@ -1723,6 +1723,7 @@ const beveragesSource = [
 		"category": "Beverages",
 		"sub_category": "Other Beverages",
 		"items": [
+			"MELLANMJÖLK",
 			"pant",
 			"pantburk",
 			"smoothie",
