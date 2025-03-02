@@ -34539,9 +34539,10 @@ function parseLidlOcrResult(text) {
   let items = [];
   let currentItem = null;
   let i = 0;
+  const priceRegex = /(\d+[.,]\d+)\s*[C|D]$/;
   while (i < lines.length) {
     const line = lines[i].trim();
-    const priceMatch = line.match(/(\d+[.,]\d+)\s*C$/);
+    const priceMatch = line.match(priceRegex);
     if (priceMatch) {
       if (currentItem) {
         items.push(currentItem);
@@ -34560,7 +34561,7 @@ function parseLidlOcrResult(text) {
           });
         } else if (nextLine.includes("SEK/kg")) {
           currentItem.extraInfo = nextLine;
-        } else if (nextLine.match(/(\d+[.,]\d+)\s*C$/)) {
+        } else if (nextLine.match(priceRegex)) {
           break;
         }
         j++;
