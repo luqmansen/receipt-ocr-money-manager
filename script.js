@@ -332,7 +332,7 @@ export function parseLidlOcrResult(text) {
 	}
 
 	const dateRegex = /\d{4}\/\d{2}\/\d{2}/;
-	const dateMonthYearRegex = /\d{2}\.\d{2}\.\d{4}/;
+	const dateMonthYearRegex = /\d{2}\.\d{2}\.\d{2}/;
 	const match = text.match(dateRegex) || text.match(dateMonthYearRegex);
 	if (!match) {
 		log('Date not found in the OCR text');
@@ -348,7 +348,7 @@ export function parseLidlOcrResult(text) {
 	if (dateRegex.test(dateString)) {
 		date = (new Date(dateString)).toLocaleDateString('sv-SE');
 	} else if (dateMonthYearRegex.test(dateString)) {
-		const [day, month, year] = dateString.split('.');
+		const [year, month, day] = dateString.split('.');
 		date = new Date(`${year}-${month}-${day}`).toLocaleDateString('sv-SE');
 	}
 	return {
