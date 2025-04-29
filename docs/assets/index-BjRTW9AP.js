@@ -34574,7 +34574,8 @@ function parseLidlOcrResult(text) {
     items.push(currentItem);
   }
   const dateRegex = /\d{4}\/\d{2}\/\d{2}/;
-  const match = text.match(dateRegex);
+  const dateMonthYearRegex = /\d{2}\.\d{2}\.\d{4}/;
+  const match = text.match(dateRegex) || text.match(dateMonthYearRegex);
   if (!match) {
     log("Date not found in the OCR text");
   }
@@ -34582,7 +34583,13 @@ function parseLidlOcrResult(text) {
     return { name: item.name, price: item.price.toFixed(2) };
   });
   const dateString = match[0];
-  const date = new Date(dateString).toLocaleDateString("sv-SE");
+  let date;
+  if (dateRegex.test(dateString)) {
+    date = new Date(dateString).toLocaleDateString("sv-SE");
+  } else if (dateMonthYearRegex.test(dateString)) {
+    const [day, month, year] = dateString.split(".");
+    date = (/* @__PURE__ */ new Date(`${year}-${month}-${day}`)).toLocaleDateString("sv-SE");
+  }
   return {
     transaction_date: date,
     items
