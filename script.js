@@ -146,7 +146,7 @@ export async function outputMoneyManagerFormat(results) {
 		const output = await Promise.all(items.map(async item => {
 			const idrAmount = (await convertPriceToIdr(item.price)).toFixed(2);
 			const dump = JSON.stringify(item.bestMatch);
-			const extraInfo = item.extraInfo ? item.extraInfo + '\n' + dump : dump;
+			const extraInfo = item.extraInfo ? item.extraInfo + '__' + dump : dump;
 			return `${formattedDate}\tCash\t${item.category}\t${item.subCategory}\t${item.name}\t${idrAmount}\tExpense\t${extraInfo}\t${item.price}\tSEK`;
 		}));
 		final_data = final_data.concat(output);
@@ -427,7 +427,7 @@ export function parseWillysOcrResult(ocrText) {
 		}
 	}
 
-	const dateRegex = /\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/;
+	const dateRegex = /\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}/;
 	for (let i = lines.length - 1; i >= 0; i--) {
 		const dateMatch = lines[i].match(dateRegex);
 		if (dateMatch) {
@@ -437,7 +437,7 @@ export function parseWillysOcrResult(ocrText) {
 	}
 
 	if (!transactionDate) {
-		log('Date not found in the OCR text');
+		log('Date not found in the OCR text, using todays date');
 		transactionDate = new Date().toLocaleDateString('sv-SE');
 	}
 
