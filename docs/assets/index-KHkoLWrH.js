@@ -34641,12 +34641,16 @@ function parseWillysOcrResult(ocrText) {
     }
   }
   const dateRegex = /\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/;
-  const dateMatch = lines[lines.length - 1].match(dateRegex);
-  if (dateMatch) {
-    transactionDate = new Date(dateMatch[0]).toLocaleDateString("sv-SE");
-  } else {
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const dateMatch = lines[i].match(dateRegex);
+    if (dateMatch) {
+      transactionDate = new Date(dateMatch[0]).toLocaleDateString("sv-SE");
+      break;
+    }
+  }
+  if (!transactionDate) {
     log("Date not found in the OCR text");
-    transactionDate = "Unknown";
+    transactionDate = (/* @__PURE__ */ new Date()).toLocaleDateString("sv-SE");
   }
   items = items.map((item) => {
     return { ...item, price: item.price.toFixed(2) };
