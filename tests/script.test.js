@@ -403,8 +403,8 @@ Nytt pris 12,50 -27,10
 Totalt 26 varor
 Totalt 439,00 SEK
 Låga priser på allt. Alltid.
-willys Plus registrerat
-willys Plus-nummer: 9752299071199367
+WilLys Plus registrerat
+WilLys Plus-nummer: 9752299071199367
 Mottaget Kontokort 439,00
 Ref:200244218204
 Nordea Debit PEPPEPPEEEE7556
