@@ -126,7 +126,7 @@ export async function outputMoneyManagerFormat(results) {
 	Date|Account|Category|Subcategory|Note|Amount|Income/Expense|Description|AmountSub|Currency
 	```
 
-	- Date is in the format of dd/mm/yyyy
+	- Date is in the format of dd-mm-yyyy
 	- Account is always `Cash`
 	- Category is inferred from the item name
 	- Subcategory is also inferred from the item name
@@ -142,7 +142,7 @@ export async function outputMoneyManagerFormat(results) {
 
 	for (const data of results) {
 		const {transaction_date, items} = data;
-		const formattedDate = transaction_date.split('-').reverse().join('/');
+		const formattedDate = transaction_date.split('-').reverse().join('-');
 		const output = await Promise.all(items.map(async item => {
 			const idrAmount = (await convertPriceToIdr(item.price)).toFixed(2);
 			const dump = JSON.stringify(item.bestMatch);
