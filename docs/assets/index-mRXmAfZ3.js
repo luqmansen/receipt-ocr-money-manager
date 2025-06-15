@@ -34416,7 +34416,7 @@ async function outputMoneyManagerFormat(results) {
   let final_data = [];
   for (const data of results) {
     const { transaction_date, items } = data;
-    const formattedDate = transaction_date.split("-").reverse().join("/");
+    const formattedDate = transaction_date.split("-").reverse().join("-");
     const output = await Promise.all(items.map(async (item) => {
       const idrAmount = (await convertPriceToIdr(item.price)).toFixed(2);
       const dump = JSON.stringify(item.bestMatch);
