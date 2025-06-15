@@ -34668,8 +34668,8 @@ function parseWillysOcrResult(ocrText) {
   };
 }
 function parseOCR(ocrText) {
-  const willysRegex = /willys/;
-  const lidlRegex = /lidl.se/;
+  const willysRegex = /willys/i;
+  const lidlRegex = /lidl.se/i;
   if (ocrText.match(willysRegex)) {
     return parseWillysOcrResult(ocrText);
   } else if (ocrText.match(lidlRegex)) {
