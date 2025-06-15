@@ -199,6 +199,62 @@ Kassa: 28/64 2025-02-22 13:30
 
 })
 
+test('parseWillysOcrUnclean', () => {
+	const text = `Fridhemsplan
+Tfn: 08-420 03 380
+Ore: 656163-2232
+NORRLANDS LEVÄJN 2stx31,920 63,80
+AGG 18P INOMHUS 251449,90 99,80
+2 x Willys Plus: 18P AGG -20,00
+TURKISK YOGHURT 2st435,90 71,80
+2 + Utllus Plus: TURKISK YOG -14,00
+NAJSKORN. 4506 EKO 23,90
+HARICOT VERTS IKG 19,90
+KYCKLINGMAGE 2stX19,90 39,80
+HAVRERIS SVENSKT 31,90
+KYCKLINGFILÉ 2sta129,00. 258,00
+KYCKLINHJÄRTA 19,90
+PLOMMON CANERIK 39,90
+AUBERGINE ST 13,90
+Rabatt ; AUBERGINE -4,00
+STANDMJÖLK ESL. 1,5 19.50
+TOFU NATURELL 11.50
+GOLD CREMA 76,90
+Rabatt: SNABBKAFFE 12:00
+NATURGODIS LV 58.14
+NATURGODIS LV 55,09
+PANTRETUR Nols
+Totalt por
+Norart 840. 73 SEK
+Löne erinen så allt. ALLE
+Med Willys Plus har du sparat: 34,00
+Willys Plus registrerat
+Willys Plus-nummer F5223907) 199367
+Hottaset Kontokort
+Mer KK ns lIE
+KOP 840,73 SEK
+Butiks kexOTTT
+Ref: 200244292453 Term: 20024429 |
+TVR: 0000000000 ALD: A0000000031010
+2025-06-14 12:53:08 TST: 0000
+Kontakt lös K/1 7.001 SE 519295
+Komsk Moms. Netto Brutto
+12,00 90,08 180,65 840,73
+TUSPARA KVITTO
+öppettider
+Alla dasar 07-22
+Välkonnen åter |
+Du betJjänades av
+Själveheckout Kassör
+Kassa! 26/28 2025-06-14 12:53
+scanna streckkoden för att öppna arinden
+NAMN`
+	const result = parseWillysOcrResult(text)
+
+	expect(result.error).toBeUndefined()
+
+})
+
 test('outputMoneyManagerFormat', async () => {
 	const items = [
 		{
