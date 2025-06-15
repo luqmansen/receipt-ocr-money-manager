@@ -276,12 +276,12 @@ test('outputMoneyManagerFormat', async () => {
 
 	expect(await outputMoneyManagerFormat(items)).toStrictEqual(
 		`Date\tAccount\tCategory\tSubcategory\tNote\tAmount\tIncome/Expense\tDescription\tAmountSub\tCurrency
-14/02/2025\tCash\tfood\tbeverage\tSHOT INGEF/GURKM\t66564.06\tExpense\t{"category":"beverage","match":"SHOT INGEF/GURKM","score":100}\t43.90\tSEK
-14/02/2025\tCash\tfood\tprotein\tÖVERLÅR KYCKLING 2st49,90\t151323.32\tExpense\t{"category":"protein","match":"kyckling","score":100}\t99.80\tSEK
-14/02/2025\tCash\tfood\tsnack\tGORGONZOLA\t45336.34\tExpense\t{"category":"snack","match":"GORGONZOLA","score":100}\t29.90\tSEK
-14/02/2025\tCash\tfood\tvegetable\tBONDBÖNOR 450G\t37755.02\tExpense\t{"category":"vegetable","match":"bonor","score":53}\t24.90\tSEK
-14/02/2025\tCash\tfood\tvegetable\tBROCCOLI\t15011.03\tExpense\t{"category":"vegetable","match":"broccoli","score":100}\t9.90\tSEK
-14/02/2025\tCash\tfood\tfruit\tJORDGUBBAR 250G 3st+44,90\t90521.06\tExpense\t{"category":"fruit","match":"jordgubbar","score":100}\t59.70\tSEK`)
+14-02-2025\tCash\tfood\tbeverage\tSHOT INGEF/GURKM\t66564.06\tExpense\t{"category":"beverage","match":"SHOT INGEF/GURKM","score":100}\t43.90\tSEK
+14-02-2025\tCash\tfood\tprotein\tÖVERLÅR KYCKLING 2st49,90\t151323.32\tExpense\t{"category":"protein","match":"kyckling","score":100}\t99.80\tSEK
+14-02-2025\tCash\tfood\tsnack\tGORGONZOLA\t45336.34\tExpense\t{"category":"snack","match":"GORGONZOLA","score":100}\t29.90\tSEK
+14-02-2025\tCash\tfood\tvegetable\tBONDBÖNOR 450G\t37755.02\tExpense\t{"category":"vegetable","match":"bonor","score":53}\t24.90\tSEK
+14-02-2025\tCash\tfood\tvegetable\tBROCCOLI\t15011.03\tExpense\t{"category":"vegetable","match":"broccoli","score":100}\t9.90\tSEK
+14-02-2025\tCash\tfood\tfruit\tJORDGUBBAR 250G 3st+44,90\t90521.06\tExpense\t{"category":"fruit","match":"jordgubbar","score":100}\t59.70\tSEK`)
 })
 
 
