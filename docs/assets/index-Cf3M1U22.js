@@ -34599,9 +34599,9 @@ function parseWillysOcrResult(ocrText) {
   let items = [];
   let transactionDate = "";
   const lines = ocrText.trim().split("\n");
-  const headerRegex = /556163-2232/;
+  const headerRegex = /2232/;
   const itemStartRegex = /Gäller inte|och frysvaror/;
-  const itemEndRegex = /^Totalt/;
+  const itemEndRegex = /^Totalt/i;
   const priceRegex = /-?\d+,\d{2}$/;
   let startIndex = -1;
   let endIndex = -1;
@@ -34617,8 +34617,11 @@ function parseWillysOcrResult(ocrText) {
       break;
     }
   }
-  if (startIndex === -1 || endIndex === -1) {
-    return { error: "Unable to find item start or end" };
+  if (startIndex === -1) {
+    return { error: "Unable to find item start" };
+  }
+  if (endIndex === -1) {
+    return { error: "Unable to find item end" };
   }
   let currentItem = "";
   for (let i = startIndex; i < endIndex; i++) {
